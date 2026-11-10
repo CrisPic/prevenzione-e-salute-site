@@ -1,15 +1,174 @@
 ---
-import ComingSoon from '../layouts/ComingSoon.astro';
-const t = {
-  title: 'Certificato medico sportivo non agonistico a Milano | Prevenzione e Salute',
-  description: 'Certificato medico sportivo non agonistico a €50 presso GetFIT, Via Piacenza 4, Milano.',
-  h1: 'Certificato medico sportivo non agonistico a Milano',
-  lead: "Visita nello studio medico all'interno di GetFIT, in Via Piacenza 4. Durata circa 20–30 minuti, certificato rilasciato al termine della visita.",
-  validity: 'validità 12 mesi',
-  book: 'Prenota online',
-  call: 'Chiama',
-  soon: 'Il sito completo e la prenotazione online sono in arrivo.',
-  map: 'Apri in Google Maps',
-};
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBar from '../components/MobileBar.astro';
+import { site } from '../data/site.js';
+
+const bookHref = site.bookingUrl || '/prenota';
+const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti';
+
+const points = [
+  { t: 'Dove si allena', d: 'Lo studio è al primo piano di GetFIT, in Via Piacenza 4.' },
+  { t: 'Prenotazione in un minuto', d: 'Scelga giorno e orario dal calendario online.' },
+  { t: 'Prezzo chiaro', d: 'Certificato non agonistico €50, senza costi nascosti.' },
+];
+const services = [
+  { t: 'Certificato medico sportivo non agonistico', p: '€50', d: 'Per palestre, associazioni, società sportive e attività parascolastiche. Valido 12 mesi.' },
+  { t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido, utile per chi si allena o vuole monitorarla nel tempo.' },
+  { t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Visita generale, parametri principali ed eventuale prescrizione di esami.' },
+];
+const audience = [
+  'Iscritti in palestra e corsi fitness',
+  'Sportivi amatoriali: corsa, ciclismo, padel, nuoto',
+  'Bambini e ragazzi che praticano sport',
+  'Palestre, associazioni e aziende',
+];
+const steps = [
+  'Prenoti online, su WhatsApp o per telefono.',
+  "Si presenti con documento d'identità ed eventuale ECG recente.",
+  'Visita di circa 20–30 minuti.',
+  'Riceve il certificato al termine della visita.',
+];
 ---
-<ComingSoon t={t} lang="it" />
+<Base
+  title="Certificato medico sportivo non agonistico a Milano – €50 | Prevenzione e Salute"
+  description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Prenotazione online.">
+  <Header />
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">Studio medico · Milano</p>
+          <h1>Certificato medico sportivo non agonistico a Milano</h1>
+          <p class="lead">La visita si svolge nello studio medico all'interno di GetFIT, in Via Piacenza 4. Durata circa 20–30 minuti, certificato rilasciato al termine della visita.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href={bookHref}>Prenota online</a>
+            <a class="btn" href={wa}>Scrivici su WhatsApp</a>
+          </div>
+        </div>
+        <aside class="price-card" aria-label="Riepilogo">
+          <svg class="pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h80l14-22 18 44 16-30 10 8h162" fill="none" stroke="#c6f432" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p class="pc-label">Certificato non agonistico</p>
+          <p class="pc-price">€{site.certificatePrice}</p>
+          <ul>
+            <li><span>Durata visita</span><strong>20–30 min</strong></li>
+            <li><span>Validità</span><strong>12 mesi</strong></li>
+            <li><span>Certificato</span><strong>Subito</strong></li>
+            <li><span>Dove</span><strong>GetFIT, 1° piano</strong></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="points">
+      <div class="container three">
+        {points.map((p, i) => (
+          <div class="point">
+            <span class="num">0{i + 1}</span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="servizi">
+      <div class="container">
+        <p class="eyebrow">Servizi</p>
+        <h2>I nostri servizi</h2>
+        <div class="three">
+          {services.map((s) => (
+            <article class="card">
+              <p class="tag">{s.p}</p>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </article>
+          ))}
+        </div>
+        <p class="more"><a href="/servizi">Scopri i servizi →</a></p>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="container two">
+        <div>
+          <p class="eyebrow">Per chi è</p>
+          <h2>Per chi fa sport, a ogni età</h2>
+          <ul class="checks">
+            {audience.map((a) => <li>{a}</li>)}
+          </ul>
+          <a class="btn btn-dark" href="/partner">Per palestre e aziende</a>
+        </div>
+        <div>
+          <p class="eyebrow">Come funziona</p>
+          <h2>Quattro passaggi</h2>
+          <ol class="steps">
+            {steps.map((s) => <li>{s}</li>)}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="dove">
+      <div class="container where">
+        <div>
+          <p class="eyebrow">Dove siamo</p>
+          <h2>GetFIT, Via Piacenza 4</h2>
+          <p>{site.venue}<br />{site.address}</p>
+          <p><strong>Orari:</strong> in arrivo</p>
+          <div class="actions">
+            <a class="btn btn-dark" href={site.mapsUrl}>Indicazioni stradali</a>
+            <a class="btn" href={bookHref}>Prenota online</a>
+          </div>
+        </div>
+        <div class="photo" role="img" aria-label="Foto esterna di GetFIT (in arrivo)"><span>Foto esterna GetFIT</span></div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <MobileBar />
+</Base>
+
+<style>
+  .hero { padding: 56px 0 72px; background: radial-gradient(1200px 400px at 85% 0%, var(--brand-soft), transparent); }
+  .hero-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; }
+  h1 { font-size: clamp(34px, 5.4vw, 56px); margin: 0 0 18px; }
+  .lead { font-size: 19px; color: var(--muted); max-width: 560px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .price-card { background: var(--brand-dark); color: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 20px 50px rgba(10,63,68,.25); }
+  .pulse { width: 100%; height: 48px; margin-bottom: 8px; }
+  .pc-label { margin: 0; color: #a9cfcf; font-weight: 600; }
+  .pc-price { font-size: 64px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.03em; color: var(--accent); }
+  .price-card ul { list-style: none; padding: 0; margin: 0; }
+  .price-card li { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
+  .price-card li span { color: #a9cfcf; }
+  .points { padding: 0 0 24px; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .point { padding: 8px 0; }
+  .num { font-weight: 800; color: var(--accent-dark); font-size: 14px; }
+  .point h3 { margin: 6px 0; font-size: 20px; }
+  .point p { margin: 0; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .card h3 { font-size: 19px; margin: 8px 0; }
+  .card p { color: var(--muted); margin: 0; }
+  .card .tag { display: inline-block; background: var(--brand-soft); color: var(--brand-dark); font-weight: 700; font-size: 14px; padding: 4px 10px; border-radius: 999px; }
+  .more { margin-top: 20px; font-weight: 650; }
+  .band { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+  .checks { list-style: none; padding: 0; margin: 0 0 24px; }
+  .checks li { padding: 10px 0 10px 34px; position: relative; border-bottom: 1px solid var(--line); }
+  .checks li::before { content: ''; position: absolute; left: 0; top: 13px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%230a3f44' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+  .steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .steps li { counter-increment: s; display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; }
+  .steps li::before { content: counter(s); flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; display: grid; place-items: center; }
+  .where { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .photo { aspect-ratio: 4 / 3; border-radius: 24px; background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); display: grid; place-items: center; color: #a9cfcf; font-weight: 600; }
+  @media (max-width: 820px) {
+    section { padding: 48px 0; }
+    .hero { padding: 32px 0 48px; }
+    .hero-grid, .two, .where { grid-template-columns: 1fr; gap: 32px; }
+    .three { grid-template-columns: 1fr; }
+    .actions .btn { flex: 1 1 auto; }
+  }
+</style>

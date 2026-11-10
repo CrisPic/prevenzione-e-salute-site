@@ -1,0 +1,30 @@
+---
+import { site } from '../data/site.js';
+const bookHref = site.bookingUrl || '/prenota';
+---
+<header class="header">
+  <div class="container bar">
+    <a class="logo" href="/"><img src="/favicon.svg" alt="" width="34" height="34" /><span>{site.name}</span></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="/servizi">Servizi</a>
+      <a href="/partner">Per palestre e aziende</a>
+      <a href="/contatti">Contatti</a>
+      <a href="/en/" class="lang">EN</a>
+      <a class="btn btn-primary" href={bookHref}>Prenota</a>
+    </nav>
+    <a class="lang mobile-only" href="/en/">EN</a>
+  </div>
+</header>
+
+<style>
+  .header { position: sticky; top: 0; z-index: 20; background: rgba(246,249,249,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 750; color: var(--brand-dark); text-decoration: none; font-size: 17px; }
+  .nav { display: flex; align-items: center; gap: 24px; }
+  .nav a:not(.btn) { color: var(--text); text-decoration: none; font-weight: 550; font-size: 15px; }
+  .nav a:not(.btn):hover { color: var(--brand); }
+  .nav .btn { padding: 9px 18px; }
+  .lang { font-weight: 700 !important; color: var(--brand) !important; text-decoration: none; }
+  .mobile-only { display: none; }
+  @media (max-width: 820px) { .nav { display: none; } .mobile-only { display: inline; } }
+</style>

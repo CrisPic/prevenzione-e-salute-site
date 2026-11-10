@@ -1,4 +1,5 @@
 ---
+import '@fontsource-variable/inter';
 const { title, description, lang = 'it' } = Astro.props;
 ---
 <!doctype html>
@@ -9,6 +10,7 @@ const { title, description, lang = 'it' } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0f5c63" />
     <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />
     <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
   </head>
@@ -21,15 +23,32 @@ const { title, description, lang = 'it' } = Astro.props;
   :root {
     --brand: #0f5c63;
     --brand-dark: #0a3f44;
+    --brand-soft: #e3f0f0;
     --accent: #c6f432;
+    --accent-dark: #a8d61a;
     --text: #1b2426;
     --muted: #5b6b6e;
+    --line: #dde7e7;
     --bg: #f6f9f9;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --card: #ffffff;
+    --radius: 16px;
+    font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     color: var(--text);
     background: var(--bg);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; line-height: 1.55; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: var(--brand); }
+  img { max-width: 100%; display: block; }
+  .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-weight: 650; text-decoration: none; border: 2px solid var(--brand); color: var(--brand); background: transparent; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); }
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn-dark { background: var(--brand); color: #fff; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: 13px; font-weight: 700; color: var(--brand); margin: 0 0 8px; }
+  h1, h2, h3 { color: var(--brand-dark); line-height: 1.15; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(26px, 4vw, 36px); margin: 0 0 24px; }
+  section { padding: 64px 0; }
 </style>

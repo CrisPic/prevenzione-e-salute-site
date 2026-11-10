@@ -1,0 +1,20 @@
+---
+import { site } from '../data/site.js';
+const bookHref = site.bookingUrl || '/prenota';
+const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti';
+const tel = site.phone ? `tel:${site.phone}` : '/contatti';
+---
+<nav class="mbar" aria-label="Azioni rapide">
+  <a href={bookHref} class="main">Prenota</a>
+  <a href={wa}>WhatsApp</a>
+  <a href={tel}>Chiama</a>
+</nav>
+
+<style>
+  .mbar { display: none; }
+  @media (max-width: 820px) {
+    .mbar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; padding: 6px; background: var(--brand-dark); border-radius: 999px; box-shadow: 0 8px 24px rgba(10,63,68,.3); }
+    .mbar a { text-align: center; padding: 12px 6px; border-radius: 999px; color: #fff; text-decoration: none; font-weight: 650; font-size: 15px; }
+    .mbar a.main { background: var(--accent); color: var(--brand-dark); }
+  }
+</style>

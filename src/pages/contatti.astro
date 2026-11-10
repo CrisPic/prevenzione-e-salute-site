@@ -1,0 +1,21 @@
+---
+import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
+const bookHref = site.bookingUrl || '/prenota';
+---
+<Page title="Contatti e orari | Prevenzione e Salute – Via Piacenza 4, Milano" description="Studio medico presso GetFIT, Via Piacenza 4, 20135 Milano, primo piano. Contatti, orari e indicazioni." eyebrow="Contatti" heading="Contatti e orari">
+  <section>
+    <div class="container prose">
+      <p><strong>Indirizzo:</strong> GetFIT, {site.address} — primo piano</p>
+      <div class="actions"><a class="btn btn-dark" href={site.mapsUrl}>Indicazioni stradali</a><a class="btn btn-primary" href={bookHref}>Prenota online</a></div>
+      <h2>Orari</h2>
+      <p>In arrivo.</p>
+      <h2>Contatti</h2>
+      <ul>
+        <li>Telefono: {site.phone || '[numero]'}</li>
+        <li>WhatsApp: {site.whatsapp || '[numero]'}</li>
+        <li>Email: {site.email || '[email]'}</li>
+      </ul>
+    </div>
+  </section>
+</Page>

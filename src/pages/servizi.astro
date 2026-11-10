@@ -1,0 +1,45 @@
+---
+import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
+const bookHref = site.bookingUrl || '/prenota';
+const services = [
+  { t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
+  { t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
+  { t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Una visita di medicina generale per fare il punto sul proprio stato di salute. Comprende colloquio sulla storia clinica e sugli stili di vita, esame obiettivo, misurazione di pressione arteriosa e frequenza cardiaca, peso e indice di massa corporea (BMI). Se necessario, il medico prescrive esami del sangue o accertamenti specialistici e ne valuta i risultati in una visita successiva.' },
+];
+const faq = [
+  ['Quanto dura il certificato?', '12 mesi dalla data di rilascio.'],
+  ['Quanto dura la visita?', 'Circa 20–30 minuti.'],
+  ["Serve l'ECG?", "Per il certificato non agonistico il medico deve valutare un ECG a riposo. Se ne ha uno recente, lo porti con sé; in caso di dubbi ci scriva prima della visita."],
+  ["Che differenza c'è con il certificato agonistico?", "L'agonistico serve per le gare ufficiali delle federazioni e richiede una visita dal medico specialista in medicina dello sport. Lo studio rilascia solo il certificato non agonistico."],
+  ['Posso venire senza prenotazione?', "Sì, negli orari di apertura, ma la prenotazione online garantisce l'orario."],
+  ['Anche per bambini e ragazzi?', 'Sì, con la presenza di un genitore o tutore.'],
+];
+---
+<Page title="Servizi e prezzi | Prevenzione e Salute – Milano" description="Certificato medico sportivo non agonistico €50, misurazione della pressione e controlli di salute di base presso GetFIT, Via Piacenza 4, Milano." eyebrow="Servizi" heading="Servizi e prezzi" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
+  <section>
+    <div class="container stack">
+      {services.map((s) => (
+        <article class="card">
+          <p class="tag">{s.p}</p>
+          <h2 style="font-size:22px;margin:10px 0 8px">{s.t}</h2>
+          <p style="margin:0;color:var(--muted)">{s.d}</p>
+        </article>
+      ))}
+      <div class="actions"><a class="btn btn-primary" href={bookHref}>Prenota online</a></div>
+    </div>
+  </section>
+  <section style="padding-top:0">
+    <div class="container prose">
+      <h2>Cosa portare alla visita</h2>
+      <ul>
+        <li>Documento d'identità e tessera sanitaria</li>
+        <li>Elettrocardiogramma (ECG) a riposo refertato, se già eseguito: lo studio al momento non esegue ECG</li>
+        <li>Eventuali referti o esami recenti</li>
+        <li>Per i minori: presenza di un genitore o tutore</li>
+      </ul>
+      <h2>Domande frequenti</h2>
+      {faq.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </div>
+  </section>
+</Page>

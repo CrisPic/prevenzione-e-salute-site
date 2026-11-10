@@ -1,0 +1,30 @@
+---
+import { site } from '../data/site.js';
+---
+<footer class="footer">
+  <div class="container grid">
+    <div>
+      <p class="name">{site.name} – Studio medico</p>
+      <p>{site.venue}<br />{site.address}</p>
+    </div>
+    <div>
+      <p>Tel. {site.phone || '[numero]'} · WhatsApp {site.whatsapp || '[numero]'}<br />{site.email || '[email]'}</p>
+      <p>P.IVA {site.vat} · PEC {site.pec}</p>
+    </div>
+    <div class="links">
+      <a href="/privacy">Privacy policy</a>
+      <a href="/privacy#cookie">Cookie policy</a>
+      <a href="/en/">English</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 110px; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+  .name { color: #fff; font-weight: 700; }
+  p { margin: 0 0 8px; }
+  .links { display: flex; flex-direction: column; gap: 6px; }
+  a { color: #fff; }
+  @media (min-width: 821px) { .footer { padding-bottom: 40px; } }
+</style>

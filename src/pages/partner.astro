@@ -1,0 +1,28 @@
+---
+import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
+const mail = site.email ? `mailto:${site.email}?subject=Certificati%20per%20gruppi` : '/contatti';
+---
+<Page title="Certificati per palestre, associazioni e aziende | Prevenzione e Salute" description="Visite per gruppi per il certificato medico sportivo non agonistico: palestre, associazioni sportive e aziende a Milano." eyebrow="Per palestre e aziende" heading="Certificati medici per i suoi iscritti o dipendenti" intro="Organizziamo visite per gruppi, nello studio di Via Piacenza 4 o in giornate dedicate concordate con la sua struttura.">
+  <section>
+    <div class="container prose">
+      <h2>A chi si rivolge</h2>
+      <ul>
+        <li>Palestre e centri fitness</li>
+        <li>Associazioni e società sportive dilettantistiche</li>
+        <li>Scuole di danza, arti marziali, nuoto</li>
+        <li>Aziende con attività sportive o di benessere per i dipendenti</li>
+      </ul>
+      <h2>Come funziona</h2>
+      <ol class="ordered">
+        <li>Ci contatta con numero di persone e periodo.</li>
+        <li>Concordiamo date e orari dedicati.</li>
+        <li>Gli iscritti prenotano lo slot con un link riservato.</li>
+        <li>Ogni partecipante riceve il certificato al termine della visita.</li>
+      </ol>
+      <p><strong>Condizioni per gruppi:</strong> su richiesta.</p>
+      <div class="actions"><a class="btn btn-primary" href={mail}>Richiedi informazioni</a></div>
+      <p style="color:var(--muted);font-size:15px">Ci indichi nome della struttura, referente, email, telefono e numero indicativo di persone.</p>
+    </div>
+  </section>
+</Page>
