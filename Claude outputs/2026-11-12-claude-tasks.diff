@@ -1,0 +1,671 @@
+diff --git a/BUILD_LOG.md b/BUILD_LOG.md
+index 4ccdd2d..5aebfc4 100644
+--- a/BUILD_LOG.md
++++ b/BUILD_LOG.md
+@@ -8,3 +8,5 @@ Decisions, tools and costs, kept for the portfolio.
+ | 2026-11-10 | Project scaffold (Astro 7, IT/EN routing), placeholder page | Claude, Astro | €0 | Build verified: 2 pages |
+ | 2026-11-10 | GitHub repo + Cloudflare Workers auto-deploy on push | Git, GitHub, Cloudflare | €0 | Live at prevenzione-e-salute-site.pichin-cristian.workers.dev |
+ | 2026-11-10 | Home + Servizi, Prenota, Partner, Contatti, Privacy (IT); palette A teal+lime; self-hosted Inter font | Claude, Astro | €0 | 7 pages build; palette chosen from 4 rendered options |
++| 2026-11-12 | v2 canvas fixes (repeated facts, lime = action, mobile hero, partner link, Partner sticky bar, one footer, radius/tile tokens, trimmed frames) + desktop Servizi/Prenota/Partner/Contatti designs | Claude (Cowork, Design canvas) | €0 | TASKS.md section 1, [Claude] items |
++| 2026-11-12 | Astro: shared components (IconTile, ServiceRow, StepTimeline, FaqItem, PriceCard, InfoCallout), no-JS mobile menu, shape tokens, focus styles + skip link, 44 px footer links, 80 px mobile-bar space, EN link hidden | Claude, Astro | €0 | Build OK (7 pages); checked at 390 and 1440 px, no horizontal overflow |
+diff --git a/src/components/FaqItem.astro b/src/components/FaqItem.astro
+new file mode 100644
+index 0000000..9ac9f98
+--- /dev/null
++++ b/src/components/FaqItem.astro
+@@ -0,0 +1,24 @@
++---
++// One FAQ entry. Native <details>: keyboard and screen-reader friendly, no JavaScript.
++const { q, a, open = false } = Astro.props;
++---
++<details class="faq" open={open}>
++  <summary class="faq__q">
++    <span>{q}</span>
++    <span class="faq__icon" aria-hidden="true"></span>
++  </summary>
++  <div class="faq__a">{a && <p>{a}</p>}<slot /></div>
++</details>
++
++<style>
++  .faq { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); }
++  .faq + .faq { margin-top: 10px; }
++  .faq__q { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 56px; padding: 14px 20px; cursor: pointer; font-weight: 650; color: var(--brand-dark); border-radius: var(--radius-m); }
++  .faq__q::-webkit-details-marker { display: none; }
++  .faq__icon { flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--brand-soft); position: relative; }
++  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2.5px; border-radius: 2px; background: var(--brand); transform: translate(-50%, -50%); }
++  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform .15s; }
++  .faq[open] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
++  .faq__a { padding: 0 20px 18px; color: var(--muted); }
++  .faq__a :global(p) { margin: 0; }
++</style>
+diff --git a/src/components/Footer.astro b/src/components/Footer.astro
+index 526f646..fe1f91f 100644
+--- a/src/components/Footer.astro
++++ b/src/components/Footer.astro
+@@ -14,17 +14,17 @@ import { site } from '../data/site.js';
+     <div class="links">
+       <a href="/privacy">Privacy policy</a>
+       <a href="/privacy#cookie">Cookie policy</a>
+-      <a href="/en/">English</a>
++      {site.showEnglish && <a href="/en/">English</a>}
+     </div>
+   </div>
+ </footer>
+ 
+ <style>
+-  .footer { background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 110px; font-size: 14px; }
++  .footer { --focus: var(--accent); background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 calc(40px + var(--mbar-space)); font-size: 14px; }
+   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+   .name { color: #fff; font-weight: 700; }
+   p { margin: 0 0 8px; }
+-  .links { display: flex; flex-direction: column; gap: 6px; }
++  .links { display: flex; flex-direction: column; }
++  .links a { min-height: 44px; display: inline-flex; align-items: center; }
+   a { color: #fff; }
+-  @media (min-width: 821px) { .footer { padding-bottom: 40px; } }
+ </style>
+diff --git a/src/components/Header.astro b/src/components/Header.astro
+index df26dc1..2af9c7c 100644
+--- a/src/components/Header.astro
++++ b/src/components/Header.astro
+@@ -1,30 +1,66 @@
+ ---
+ import { site } from '../data/site.js';
+ const bookHref = site.bookingUrl || '/prenota';
++const path = Astro.url.pathname.replace(/\/$/, '') || '/';
++const links = [
++  { href: '/servizi', label: 'Servizi' },
++  { href: '/partner', label: 'Per palestre e aziende' },
++  { href: '/contatti', label: 'Contatti' },
++];
++const current = (href) => (path === href ? 'page' : undefined);
+ ---
+ <header class="header">
+   <div class="container bar">
+     <a class="logo" href="/"><img src="/favicon.svg" alt="" width="34" height="34" /><span>{site.name}</span></a>
+     <nav class="nav" aria-label="Principale">
+-      <a href="/servizi">Servizi</a>
+-      <a href="/partner">Per palestre e aziende</a>
+-      <a href="/contatti">Contatti</a>
+-      <a href="/en/" class="lang">EN</a>
++      {links.map((l) => <a href={l.href} aria-current={current(l.href)}>{l.label}</a>)}
++      {site.showEnglish && <a href="/en/" class="lang" lang="en">EN</a>}
+       <a class="btn btn-primary" href={bookHref}>Prenota</a>
+     </nav>
+-    <a class="lang mobile-only" href="/en/">EN</a>
++
++    <!-- Mobile menu: native <details>, no JavaScript -->
++    <details class="menu">
++      <summary class="menu__toggle">
++        <span class="visually-hidden">Menu</span>
++        <svg class="menu__open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
++        <svg class="menu__close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
++      </summary>
++      <nav class="menu__panel" aria-label="Menu">
++        {links.map((l) => (
++          <a href={l.href} aria-current={current(l.href)}>{l.label}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg></a>
++        ))}
++        {site.showEnglish && <a href="/en/" lang="en">English</a>}
++        <a class="btn btn-primary menu__cta" href={bookHref}>Prenota la visita</a>
++      </nav>
++    </details>
+   </div>
+ </header>
+ 
+ <style>
+   .header { position: sticky; top: 0; z-index: 20; background: rgba(246,249,249,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+   .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 750; color: var(--brand-dark); text-decoration: none; font-size: 17px; }
++  .logo { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 750; color: var(--brand-dark); text-decoration: none; font-size: 17px; }
+   .nav { display: flex; align-items: center; gap: 24px; }
+-  .nav a:not(.btn) { color: var(--text); text-decoration: none; font-weight: 550; font-size: 15px; }
+-  .nav a:not(.btn):hover { color: var(--brand); }
+-  .nav .btn { padding: 9px 18px; }
+-  .lang { font-weight: 700 !important; color: var(--brand) !important; text-decoration: none; }
+-  .mobile-only { display: none; }
+-  @media (max-width: 820px) { .nav { display: none; } .mobile-only { display: inline; } }
++  .nav a:not(.btn) { color: var(--text); text-decoration: none; font-weight: 550; font-size: 15px; min-height: 44px; display: inline-flex; align-items: center; }
++  .nav a:not(.btn):hover, .nav a[aria-current='page'] { color: var(--brand); }
++  .nav a[aria-current='page'] { font-weight: 700; }
++  .nav .btn { min-height: 44px; padding: 0 18px; }
++  .lang { font-weight: 700 !important; color: var(--brand) !important; }
++
++  .menu { display: none; }
++  .menu__toggle { list-style: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-s); background: #fff; border: 1px solid var(--line); color: var(--brand-dark); cursor: pointer; }
++  .menu__toggle::-webkit-details-marker { display: none; }
++  .menu__close, .menu[open] .menu__open { display: none; }
++  .menu[open] .menu__close { display: block; }
++  .menu__panel { position: absolute; left: 0; right: 0; top: 68px; background: var(--bg); padding: 8px 20px 24px; border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -20px rgba(10,63,68,.35); }
++  .menu__panel a:not(.btn) { display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid var(--line); color: var(--brand-dark); text-decoration: none; font-weight: 650; font-size: 18px; }
++  .menu__panel a:not(.btn) svg { color: var(--brand); }
++  .menu__panel a[aria-current='page'] { color: var(--brand); }
++  .menu__cta { width: 100%; margin-top: 20px; }
++  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
++
++  @media (max-width: 820px) {
++    .nav { display: none; }
++    .menu { display: block; }
++  }
+ </style>
+diff --git a/src/components/IconTile.astro b/src/components/IconTile.astro
+new file mode 100644
+index 0000000..19bcc51
+--- /dev/null
++++ b/src/components/IconTile.astro
+@@ -0,0 +1,16 @@
++---
++// Square icon tile. size: 'm' = 48px (default), 's' = 40px. tone: 'soft' (teal-soft) or 'white'.
++import { icons } from './icons.js';
++const { icon, size = 'm', tone = 'soft', class: cls = '' } = Astro.props;
++const px = size === 's' ? 20 : 22;
++---
++<span class:list={['icon-tile', `icon-tile--${size}`, `icon-tile--${tone}`, cls]} aria-hidden="true">
++  <svg width={px} height={px} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={icons[icon]} />
++</span>
++
++<style>
++  .icon-tile { flex: 0 0 auto; display: grid; place-items: center; border-radius: var(--radius-s); color: var(--brand); background: var(--brand-soft); }
++  .icon-tile--m { width: var(--tile-m); height: var(--tile-m); }
++  .icon-tile--s { width: var(--tile-s); height: var(--tile-s); }
++  .icon-tile--white { background: #fff; }
++</style>
+diff --git a/src/components/InfoCallout.astro b/src/components/InfoCallout.astro
+new file mode 100644
+index 0000000..c15b7c0
+--- /dev/null
++++ b/src/components/InfoCallout.astro
+@@ -0,0 +1,17 @@
++---
++// Teal-soft note with an icon. Put the text in the slot.
++import { icons } from './icons.js';
++const { icon = 'info', tone = 'soft' } = Astro.props;
++---
++<div class:list={['callout', `callout--${tone}`]}>
++  <svg class="callout__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[icon]} />
++  <div class="callout__body"><slot /></div>
++</div>
++
++<style>
++  .callout { display: flex; gap: 12px; align-items: flex-start; border-radius: var(--radius-m); padding: 16px 18px; color: var(--text); }
++  .callout--soft { background: var(--brand-soft); }
++  .callout--white { background: #fff; border: 1px solid var(--line); }
++  .callout__icon { flex: 0 0 auto; color: var(--brand); margin-top: 1px; }
++  .callout__body :global(p) { margin: 0; }
++</style>
+diff --git a/src/components/MobileBar.astro b/src/components/MobileBar.astro
+index fe9fda0..fa086c5 100644
+--- a/src/components/MobileBar.astro
++++ b/src/components/MobileBar.astro
+@@ -13,8 +13,8 @@ const tel = site.phone ? `tel:${site.phone}` : '/contatti';
+ <style>
+   .mbar { display: none; }
+   @media (max-width: 820px) {
+-    .mbar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; padding: 6px; background: var(--brand-dark); border-radius: 999px; box-shadow: 0 8px 24px rgba(10,63,68,.3); }
+-    .mbar a { text-align: center; padding: 12px 6px; border-radius: 999px; color: #fff; text-decoration: none; font-weight: 650; font-size: 15px; }
++    .mbar { --focus: var(--accent); position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; padding: 6px; background: var(--brand-dark); border-radius: 999px; box-shadow: 0 8px 24px rgba(10,63,68,.3); }
++    .mbar a { display: flex; align-items: center; justify-content: center; min-height: 48px; text-align: center; padding: 0 6px; border-radius: 999px; color: #fff; text-decoration: none; font-weight: 650; font-size: 15px; }
+     .mbar a.main { background: var(--accent); color: var(--brand-dark); }
+   }
+ </style>
+diff --git a/src/components/PriceCard.astro b/src/components/PriceCard.astro
+new file mode 100644
+index 0000000..23791aa
+--- /dev/null
++++ b/src/components/PriceCard.astro
+@@ -0,0 +1,25 @@
++---
++// Dark summary card with the price (lime) and key facts. facts: [{ label, value }].
++const { label, price, facts = [], ctaHref, ctaLabel } = Astro.props;
++---
++<div class="price-card">
++  <svg class="price-card__pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h80l14-22 18 44 16-30 10 8h162" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></svg>
++  <p class="price-card__label">{label}</p>
++  <p class="price-card__price">{price}</p>
++  <dl class="price-card__facts">
++    {facts.map((f) => (<div><dt>{f.label}</dt><dd>{f.value}</dd></div>))}
++  </dl>
++  {ctaHref && <a class="btn btn-primary price-card__cta" href={ctaHref}>{ctaLabel}</a>}
++</div>
++
++<style>
++  .price-card { --focus: var(--accent); background: var(--brand-dark); color: #fff; border-radius: var(--radius-l); padding: 28px; box-shadow: 0 20px 50px rgba(10,63,68,.25); }
++  .price-card__pulse { width: 100%; height: 48px; margin-bottom: 8px; color: #a9cfcf; }
++  .price-card__label { margin: 0; color: #a9cfcf; font-weight: 600; }
++  .price-card__price { font-size: 64px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.03em; line-height: 1.1; color: var(--accent); }
++  .price-card__facts { margin: 0; }
++  .price-card__facts div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
++  .price-card__facts dt { color: #a9cfcf; }
++  .price-card__facts dd { margin: 0; font-weight: 700; }
++  .price-card__cta { width: 100%; margin-top: 16px; }
++</style>
+diff --git a/src/components/ServiceRow.astro b/src/components/ServiceRow.astro
+new file mode 100644
+index 0000000..47c65b0
+--- /dev/null
++++ b/src/components/ServiceRow.astro
+@@ -0,0 +1,28 @@
++---
++// One service: icon, title, price or tag, description. featured = teal card (the certificate).
++import IconTile from './IconTile.astro';
++const { icon, title, price, description, featured = false, headingLevel = 3 } = Astro.props;
++const H = `h${headingLevel}`;
++---
++<article class:list={['service', { 'service--featured': featured }]}>
++  <div class="service__top">
++    <IconTile icon={icon} />
++    <p class:list={['service__price', { 'service__price--tag': !featured }]}>{price}</p>
++  </div>
++  <H class="service__title">{title}</H>
++  {description && <p class="service__desc">{description}</p>}
++  <slot />
++</article>
++
++<style>
++  .service { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 24px; display: flex; flex-direction: column; gap: 12px; }
++  .service__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
++  .service__price { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: var(--brand-dark); }
++  .service__price--tag { font-size: 14px; font-weight: 700; letter-spacing: 0; background: var(--brand-soft); padding: 6px 12px; border-radius: 999px; }
++  .service__title { margin: 0; font-size: 21px; line-height: 1.2; color: var(--brand-dark); }
++  .service__desc { margin: 0; color: var(--muted); }
++  .service--featured { --focus: var(--accent); background: var(--brand); border-color: var(--brand); color: #fff; }
++  .service--featured .service__price { color: var(--accent); }
++  .service--featured .service__title { color: #fff; }
++  .service--featured .service__desc { color: #cfe3e3; }
++</style>
+diff --git a/src/components/StepTimeline.astro b/src/components/StepTimeline.astro
+new file mode 100644
+index 0000000..f3b2d2d
+--- /dev/null
++++ b/src/components/StepTimeline.astro
+@@ -0,0 +1,29 @@
++---
++// Numbered vertical timeline. steps: [{ title?, text }] or plain strings.
++const { steps = [] } = Astro.props;
++const items = steps.map((s) => (typeof s === 'string' ? { text: s } : s));
++---
++<ol class="timeline">
++  {items.map((s, i) => (
++    <li class:list={['timeline__item', { 'timeline__item--last': i === items.length - 1 }]}>
++      <span class="timeline__num" aria-hidden="true">{i + 1}</span>
++      <div class="timeline__body">
++        {s.title && <p class="timeline__title">{s.title}</p>}
++        <p class="timeline__text">{s.text}</p>
++      </div>
++    </li>
++  ))}
++</ol>
++
++<style>
++  .timeline { list-style: none; padding: 0; margin: 0; }
++  .timeline__item { position: relative; display: flex; gap: 16px; padding-bottom: 20px; }
++  .timeline__item:not(.timeline__item--last)::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: #9fc6c6; }
++  .timeline__item--last { padding-bottom: 0; }
++  .timeline__num { flex: 0 0 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 750; background: var(--brand); color: #fff; position: relative; }
++  .timeline__item--last .timeline__num { background: var(--brand-soft); color: var(--brand-dark); box-shadow: inset 0 0 0 2px var(--brand); }
++  .timeline__body { padding-top: 8px; }
++  .timeline__title { margin: 0; font-weight: 700; color: var(--brand-dark); }
++  .timeline__text { margin: 0; color: var(--text); }
++  .timeline__title + .timeline__text { color: var(--muted); font-size: 15px; }
++</style>
+diff --git a/src/components/icons.js b/src/components/icons.js
+new file mode 100644
+index 0000000..5a7b06c
+--- /dev/null
++++ b/src/components/icons.js
+@@ -0,0 +1,16 @@
++// Inline stroke icons (24×24, Lucide-style paths). Used by IconTile and InfoCallout.
++export const icons = {
++  certificate: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/>',
++  gauge: '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
++  stethoscope: '<path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>',
++  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
++  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
++  shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
++  ecg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
++  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
++  id: '<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h4"/>',
++  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
++  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
++  arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
++  check: '<path d="M20 6 9 17l-5-5"/>',
++};
+diff --git a/src/data/site.js b/src/data/site.js
+index 07d1326..bbc05b6 100644
+--- a/src/data/site.js
++++ b/src/data/site.js
+@@ -12,4 +12,5 @@ export const site = {
+   vat: '[P.IVA]', // TODO
+   pec: '[PEC]',   // TODO
+   certificatePrice: 50,
++  showEnglish: false, // set to true once the English pages exist
+ };
+diff --git a/src/layouts/Base.astro b/src/layouts/Base.astro
+index beeb2d1..46895f9 100644
+--- a/src/layouts/Base.astro
++++ b/src/layouts/Base.astro
+@@ -15,6 +15,7 @@ const { title, description, lang = 'it' } = Astro.props;
+     <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
+   </head>
+   <body>
++    <a class="skip-link" href="#main">Vai al contenuto</a>
+     <slot />
+   </body>
+ </html>
+@@ -31,18 +32,34 @@ const { title, description, lang = 'it' } = Astro.props;
+     --line: #dde7e7;
+     --bg: #f6f9f9;
+     --card: #ffffff;
+-    --radius: 16px;
++    /* Shape tokens (v2 canvas): radius 12 / 20 / 28, icon tiles 40 / 48 */
++    --radius-s: 12px;
++    --radius-m: 20px;
++    --radius-l: 28px;
++    --radius: var(--radius-m);
++    --tile-s: 40px;
++    --tile-m: 48px;
++    --focus: var(--brand);
++    --mbar-space: 0px;
+     font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+     color: var(--text);
+     background: var(--bg);
+   }
+   * { box-sizing: border-box; }
+-  html { scroll-behavior: smooth; }
++  html { scroll-behavior: smooth; scroll-padding-top: 80px; scroll-padding-bottom: var(--mbar-space); }
++  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
++  /* Mobile: room for the sticky Prenota / WhatsApp / Chiama bar */
++  @media (max-width: 820px) { :root { --mbar-space: 80px; } }
++  /* Visible keyboard focus on every link, button and summary */
++  :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
++  .skip-link { position: absolute; left: 12px; top: -100px; z-index: 100; background: var(--brand-dark); color: #fff; padding: 12px 18px; border-radius: var(--radius-s); font-weight: 700; text-decoration: none; }
++  .skip-link:focus { top: 12px; }
++  main:focus { outline: none; }
+   body { margin: 0; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+   a { color: var(--brand); }
+   img { max-width: 100%; display: block; }
+   .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-weight: 650; text-decoration: none; border: 2px solid var(--brand); color: var(--brand); background: transparent; transition: transform .15s, background .15s; }
++  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 11px 22px; border-radius: 999px; font-weight: 650; text-decoration: none; border: 2px solid var(--brand); color: var(--brand); background: transparent; transition: transform .15s, background .15s; }
+   .btn:hover { transform: translateY(-1px); }
+   .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); }
+   .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+diff --git a/src/layouts/ComingSoon.astro b/src/layouts/ComingSoon.astro
+index a566e63..7815eaf 100644
+--- a/src/layouts/ComingSoon.astro
++++ b/src/layouts/ComingSoon.astro
+@@ -5,7 +5,7 @@ const { t, lang } = Astro.props;
+ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
+ ---
+ <Base title={t.title} description={t.description} lang={lang}>
+-  <main class="wrap">
++  <main id="main" tabindex="-1" class="wrap">
+     <nav class="lang"><a href="/" aria-current={lang === 'it'}>IT</a> · <a href="/en/" aria-current={lang === 'en'}>EN</a></nav>
+     <p class="logo"><img src="/favicon.svg" alt="" width="40" height="40" /> {site.name}</p>
+     <h1>{t.h1}</h1>
+diff --git a/src/layouts/Page.astro b/src/layouts/Page.astro
+index bbfc9e5..105c105 100644
+--- a/src/layouts/Page.astro
++++ b/src/layouts/Page.astro
+@@ -7,7 +7,7 @@ const { title, description, eyebrow, heading, intro } = Astro.props;
+ ---
+ <Base title={title} description={description}>
+   <Header />
+-  <main>
++  <main id="main" tabindex="-1">
+     <section class="page-hero">
+       <div class="container">
+         {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+@@ -28,17 +28,13 @@ const { title, description, eyebrow, heading, intro } = Astro.props;
+ </style>
+ <style is:global>
+   .prose { max-width: 760px; }
+-  .prose h2 { font-size: 24px; margin: 40px 0 12px; }
++  .prose h2 { font-size: 24px; margin: 40px 0 16px; }
+   .prose p, .prose li { color: var(--text); }
+-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
++  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 24px; }
+   .tag { display: inline-block; background: var(--brand-soft); color: var(--brand-dark); font-weight: 700; font-size: 14px; padding: 4px 10px; border-radius: 999px; margin: 0; }
+   .stack { display: grid; gap: 20px; }
+   .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+-  .note { padding: 14px 18px; background: #fff; border-left: 4px solid var(--accent); border-radius: 8px; }
+-  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; }
+-  details + details { margin-top: 10px; }
+-  summary { font-weight: 650; cursor: pointer; color: var(--brand-dark); }
+-  details p { margin: 10px 0 0; color: var(--muted); }
++  .note { padding: 16px 18px; background: var(--brand-soft); border-radius: var(--radius-m); }
+   .ordered { padding-left: 20px; } .ordered li { margin: 8px 0; }
+   @media (max-width: 820px) { .actions .btn { flex: 1 1 auto; } }
+ </style>
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index c15404f..7d4dbf8 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -3,6 +3,9 @@ import Base from '../layouts/Base.astro';
+ import Header from '../components/Header.astro';
+ import Footer from '../components/Footer.astro';
+ import MobileBar from '../components/MobileBar.astro';
++import PriceCard from '../components/PriceCard.astro';
++import ServiceRow from '../components/ServiceRow.astro';
++import StepTimeline from '../components/StepTimeline.astro';
+ import { site } from '../data/site.js';
+ 
+ const bookHref = site.bookingUrl || '/prenota';
+@@ -14,9 +17,9 @@ const points = [
+   { t: 'Prezzo chiaro', d: 'Certificato non agonistico €50, senza costi nascosti.' },
+ ];
+ const services = [
+-  { t: 'Certificato medico sportivo non agonistico', p: '€50', d: 'Per palestre, associazioni, società sportive e attività parascolastiche. Valido 12 mesi.' },
+-  { t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido, utile per chi si allena o vuole monitorarla nel tempo.' },
+-  { t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Visita generale, parametri principali ed eventuale prescrizione di esami.' },
++  { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: 'Per palestre, associazioni, società sportive e attività parascolastiche. Valido 12 mesi.' },
++  { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido, utile per chi si allena o vuole monitorarla nel tempo.' },
++  { i: 'stethoscope', t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Visita generale, parametri principali ed eventuale prescrizione di esami.' },
+ ];
+ const audience = [
+   'Iscritti in palestra e corsi fitness',
+@@ -35,7 +38,7 @@ const steps = [
+   title="Certificato medico sportivo non agonistico a Milano – €50 | Prevenzione e Salute"
+   description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Prenotazione online.">
+   <Header />
+-  <main>
++  <main id="main" tabindex="-1">
+     <section class="hero">
+       <div class="container hero-grid">
+         <div>
+@@ -47,17 +50,16 @@ const steps = [
+             <a class="btn" href={wa}>Scrivici su WhatsApp</a>
+           </div>
+         </div>
+-        <aside class="price-card" aria-label="Riepilogo">
+-          <svg class="pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h80l14-22 18 44 16-30 10 8h162" fill="none" stroke="#c6f432" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+-          <p class="pc-label">Certificato non agonistico</p>
+-          <p class="pc-price">€{site.certificatePrice}</p>
+-          <ul>
+-            <li><span>Durata visita</span><strong>20–30 min</strong></li>
+-            <li><span>Validità</span><strong>12 mesi</strong></li>
+-            <li><span>Certificato</span><strong>Subito</strong></li>
+-            <li><span>Dove</span><strong>GetFIT, 1° piano</strong></li>
+-          </ul>
+-        </aside>
++        <PriceCard
++          label="Certificato non agonistico"
++          price={`€${site.certificatePrice}`}
++          facts={[
++            { label: 'Durata visita', value: '20–30 min' },
++            { label: 'Validità', value: '12 mesi' },
++            { label: 'Certificato', value: 'Subito' },
++            { label: 'Dove', value: 'GetFIT, 1° piano' },
++          ]}
++        />
+       </div>
+     </section>
+ 
+@@ -78,12 +80,8 @@ const steps = [
+         <p class="eyebrow">Servizi</p>
+         <h2>I nostri servizi</h2>
+         <div class="three">
+-          {services.map((s) => (
+-            <article class="card">
+-              <p class="tag">{s.p}</p>
+-              <h3>{s.t}</h3>
+-              <p>{s.d}</p>
+-            </article>
++          {services.map((s, i) => (
++            <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} />
+           ))}
+         </div>
+         <p class="more"><a href="/servizi">Scopri i servizi →</a></p>
+@@ -103,9 +101,7 @@ const steps = [
+         <div>
+           <p class="eyebrow">Come funziona</p>
+           <h2>Quattro passaggi</h2>
+-          <ol class="steps">
+-            {steps.map((s) => <li>{s}</li>)}
+-          </ol>
++          <StepTimeline steps={steps} />
+         </div>
+       </div>
+     </section>
+@@ -136,34 +132,20 @@ const steps = [
+   h1 { font-size: clamp(34px, 5.4vw, 56px); margin: 0 0 18px; }
+   .lead { font-size: 19px; color: var(--muted); max-width: 560px; }
+   .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+-  .price-card { background: var(--brand-dark); color: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 20px 50px rgba(10,63,68,.25); }
+-  .pulse { width: 100%; height: 48px; margin-bottom: 8px; }
+-  .pc-label { margin: 0; color: #a9cfcf; font-weight: 600; }
+-  .pc-price { font-size: 64px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.03em; color: var(--accent); }
+-  .price-card ul { list-style: none; padding: 0; margin: 0; }
+-  .price-card li { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
+-  .price-card li span { color: #a9cfcf; }
+   .points { padding: 0 0 24px; }
+   .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+   .point { padding: 8px 0; }
+   .num { font-weight: 800; color: var(--accent-dark); font-size: 14px; }
+   .point h3 { margin: 6px 0; font-size: 20px; }
+   .point p { margin: 0; color: var(--muted); }
+-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+-  .card h3 { font-size: 19px; margin: 8px 0; }
+-  .card p { color: var(--muted); margin: 0; }
+-  .card .tag { display: inline-block; background: var(--brand-soft); color: var(--brand-dark); font-weight: 700; font-size: 14px; padding: 4px 10px; border-radius: 999px; }
+   .more { margin-top: 20px; font-weight: 650; }
+   .band { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+   .checks { list-style: none; padding: 0; margin: 0 0 24px; }
+   .checks li { padding: 10px 0 10px 34px; position: relative; border-bottom: 1px solid var(--line); }
+   .checks li::before { content: ''; position: absolute; left: 0; top: 13px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%230a3f44' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+-  .steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+-  .steps li { counter-increment: s; display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; }
+-  .steps li::before { content: counter(s); flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; display: grid; place-items: center; }
+   .where { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+-  .photo { aspect-ratio: 4 / 3; border-radius: 24px; background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); display: grid; place-items: center; color: #a9cfcf; font-weight: 600; }
++  .photo { aspect-ratio: 4 / 3; border-radius: var(--radius-l); background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); display: grid; place-items: center; color: #a9cfcf; font-weight: 600; }
+   @media (max-width: 820px) {
+     section { padding: 48px 0; }
+     .hero { padding: 32px 0 48px; }
+diff --git a/src/pages/partner.astro b/src/pages/partner.astro
+index c355400..2ac15ca 100644
+--- a/src/pages/partner.astro
++++ b/src/pages/partner.astro
+@@ -1,6 +1,7 @@
+ ---
+ import Page from '../layouts/Page.astro';
+ import { site } from '../data/site.js';
++import StepTimeline from '../components/StepTimeline.astro';
+ const mail = site.email ? `mailto:${site.email}?subject=Certificati%20per%20gruppi` : '/contatti';
+ ---
+ <Page title="Certificati per palestre, associazioni e aziende | Prevenzione e Salute" description="Visite per gruppi per il certificato medico sportivo non agonistico: palestre, associazioni sportive e aziende a Milano." eyebrow="Per palestre e aziende" heading="Certificati medici per i suoi iscritti o dipendenti" intro="Organizziamo visite per gruppi, nello studio di Via Piacenza 4 o in giornate dedicate concordate con la sua struttura.">
+@@ -14,12 +15,12 @@ const mail = site.email ? `mailto:${site.email}?subject=Certificati%20per%20grup
+         <li>Aziende con attività sportive o di benessere per i dipendenti</li>
+       </ul>
+       <h2>Come funziona</h2>
+-      <ol class="ordered">
+-        <li>Ci contatta con numero di persone e periodo.</li>
+-        <li>Concordiamo date e orari dedicati.</li>
+-        <li>Gli iscritti prenotano lo slot con un link riservato.</li>
+-        <li>Ogni partecipante riceve il certificato al termine della visita.</li>
+-      </ol>
++      <StepTimeline steps={[
++        'Ci contatta con numero di persone e periodo.',
++        'Concordiamo date e orari dedicati.',
++        'Gli iscritti prenotano lo slot con un link riservato.',
++        'Ogni partecipante riceve il certificato al termine della visita.',
++      ]} />
+       <p><strong>Condizioni per gruppi:</strong> su richiesta.</p>
+       <div class="actions"><a class="btn btn-primary" href={mail}>Richiedi informazioni</a></div>
+       <p style="color:var(--muted);font-size:15px">Ci indichi nome della struttura, referente, email, telefono e numero indicativo di persone.</p>
+diff --git a/src/pages/prenota.astro b/src/pages/prenota.astro
+index 2fd8903..00f4e0d 100644
+--- a/src/pages/prenota.astro
++++ b/src/pages/prenota.astro
+@@ -1,14 +1,15 @@
+ ---
+ import Page from '../layouts/Page.astro';
+ import { site } from '../data/site.js';
++import InfoCallout from '../components/InfoCallout.astro';
+ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
+ ---
+ <Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico presso GetFIT, Via Piacenza 4, Milano." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email e un promemoria il giorno prima.">
+   <section>
+     <div class="container prose">
+       {site.bookingUrl
+-        ? <iframe src={site.bookingUrl} title="Calendario di prenotazione" style="width:100%;min-height:720px;border:1px solid var(--line);border-radius:16px;background:#fff" loading="lazy"></iframe>
+-        : <p class="note">Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p>}
++        ? <iframe src={site.bookingUrl} title="Calendario di prenotazione" style="width:100%;min-height:720px;border:1px solid var(--line);border-radius:var(--radius-m);background:#fff" loading="lazy"></iframe>
++        : <InfoCallout icon="calendar"><p>Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p></InfoCallout>}
+       <h2>Preferisce scriverci o chiamare?</h2>
+       <div class="actions">
+         <a class="btn btn-dark" href={wa || '/contatti'}>Scrivici su WhatsApp</a>
+@@ -16,7 +17,7 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
+       </div>
+       <h2>Disdire o spostare un appuntamento</h2>
+       <p>Usi il link nell'email di conferma oppure ci scriva su WhatsApp, possibilmente almeno 24 ore prima.</p>
+-      <p><em>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</em></p>
++      <InfoCallout icon="shield" tone="white"><p>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</p></InfoCallout>
+     </div>
+   </section>
+ </Page>
+diff --git a/src/pages/servizi.astro b/src/pages/servizi.astro
+index 83fbac4..97bb392 100644
+--- a/src/pages/servizi.astro
++++ b/src/pages/servizi.astro
+@@ -1,11 +1,13 @@
+ ---
+ import Page from '../layouts/Page.astro';
+ import { site } from '../data/site.js';
++import ServiceRow from '../components/ServiceRow.astro';
++import FaqItem from '../components/FaqItem.astro';
+ const bookHref = site.bookingUrl || '/prenota';
+ const services = [
+-  { t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
+-  { t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
+-  { t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Una visita di medicina generale per fare il punto sul proprio stato di salute. Comprende colloquio sulla storia clinica e sugli stili di vita, esame obiettivo, misurazione di pressione arteriosa e frequenza cardiaca, peso e indice di massa corporea (BMI). Se necessario, il medico prescrive esami del sangue o accertamenti specialistici e ne valuta i risultati in una visita successiva.' },
++  { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
++  { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
++  { i: 'stethoscope', t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Una visita di medicina generale per fare il punto sul proprio stato di salute. Comprende colloquio sulla storia clinica e sugli stili di vita, esame obiettivo, misurazione di pressione arteriosa e frequenza cardiaca, peso e indice di massa corporea (BMI). Se necessario, il medico prescrive esami del sangue o accertamenti specialistici e ne valuta i risultati in una visita successiva.' },
+ ];
+ const faq = [
+   ['Quanto dura il certificato?', '12 mesi dalla data di rilascio.'],
+@@ -19,12 +21,8 @@ const faq = [
+ <Page title="Servizi e prezzi | Prevenzione e Salute – Milano" description="Certificato medico sportivo non agonistico €50, misurazione della pressione e controlli di salute di base presso GetFIT, Via Piacenza 4, Milano." eyebrow="Servizi" heading="Servizi e prezzi" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
+   <section>
+     <div class="container stack">
+-      {services.map((s) => (
+-        <article class="card">
+-          <p class="tag">{s.p}</p>
+-          <h2 style="font-size:22px;margin:10px 0 8px">{s.t}</h2>
+-          <p style="margin:0;color:var(--muted)">{s.d}</p>
+-        </article>
++      {services.map((s, i) => (
++        <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} headingLevel={2} />
+       ))}
+       <div class="actions"><a class="btn btn-primary" href={bookHref}>Prenota online</a></div>
+     </div>
+@@ -39,7 +37,7 @@ const faq = [
+         <li>Per i minori: presenza di un genitore o tutore</li>
+       </ul>
+       <h2>Domande frequenti</h2>
+-      {faq.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
++      {faq.map(([q, a]) => <FaqItem q={q} a={a} />)}
+     </div>
+   </section>
+ </Page>
