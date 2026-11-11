@@ -12,4 +12,5 @@ export const site = {
   vat: '[P.IVA]', // TODO
   pec: '[PEC]',   // TODO
   certificatePrice: 50,
+  showEnglish: false, // set to true once the English pages exist
 };

@@ -1,11 +1,13 @@
 ---
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
+import ServiceRow from '../components/ServiceRow.astro';
+import FaqItem from '../components/FaqItem.astro';
 const bookHref = site.bookingUrl || '/prenota';
 const services = [
-  { t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
-  { t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
-  { t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Una visita di medicina generale per fare il punto sul proprio stato di salute. Comprende colloquio sulla storia clinica e sugli stili di vita, esame obiettivo, misurazione di pressione arteriosa e frequenza cardiaca, peso e indice di massa corporea (BMI). Se necessario, il medico prescrive esami del sangue o accertamenti specialistici e ne valuta i risultati in una visita successiva.' },
+  { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
+  { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
+  { i: 'stethoscope', t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Una visita di medicina generale per fare il punto sul proprio stato di salute. Comprende colloquio sulla storia clinica e sugli stili di vita, esame obiettivo, misurazione di pressione arteriosa e frequenza cardiaca, peso e indice di massa corporea (BMI). Se necessario, il medico prescrive esami del sangue o accertamenti specialistici e ne valuta i risultati in una visita successiva.' },
 ];
 const faq = [
   ['Quanto dura il certificato?', '12 mesi dalla data di rilascio.'],
@@ -19,12 +21,8 @@ const faq = [
 <Page title="Servizi e prezzi | Prevenzione e Salute – Milano" description="Certificato medico sportivo non agonistico €50, misurazione della pressione e controlli di salute di base presso GetFIT, Via Piacenza 4, Milano." eyebrow="Servizi" heading="Servizi e prezzi" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
   <section>
     <div class="container stack">
-      {services.map((s) => (
-        <article class="card">
-          <p class="tag">{s.p}</p>
-          <h2 style="font-size:22px;margin:10px 0 8px">{s.t}</h2>
-          <p style="margin:0;color:var(--muted)">{s.d}</p>
-        </article>
+      {services.map((s, i) => (
+        <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} headingLevel={2} />
       ))}
       <div class="actions"><a class="btn btn-primary" href={bookHref}>Prenota online</a></div>
     </div>
@@ -39,7 +37,7 @@ const faq = [
         <li>Per i minori: presenza di un genitore o tutore</li>
       </ul>
       <h2>Domande frequenti</h2>
-      {faq.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+      {faq.map(([q, a]) => <FaqItem q={q} a={a} />)}
     </div>
   </section>
 </Page>

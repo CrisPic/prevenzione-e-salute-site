@@ -1,14 +1,15 @@
 ---
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
+import InfoCallout from '../components/InfoCallout.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
 <Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico presso GetFIT, Via Piacenza 4, Milano." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email e un promemoria il giorno prima.">
   <section>
     <div class="container prose">
       {site.bookingUrl
-        ? <iframe src={site.bookingUrl} title="Calendario di prenotazione" style="width:100%;min-height:720px;border:1px solid var(--line);border-radius:16px;background:#fff" loading="lazy"></iframe>
-        : <p class="note">Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p>}
+        ? <iframe src={site.bookingUrl} title="Calendario di prenotazione" style="width:100%;min-height:720px;border:1px solid var(--line);border-radius:var(--radius-m);background:#fff" loading="lazy"></iframe>
+        : <InfoCallout icon="calendar"><p>Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p></InfoCallout>}
       <h2>Preferisce scriverci o chiamare?</h2>
       <div class="actions">
         <a class="btn btn-dark" href={wa || '/contatti'}>Scrivici su WhatsApp</a>
@@ -16,7 +17,7 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
       </div>
       <h2>Disdire o spostare un appuntamento</h2>
       <p>Usi il link nell'email di conferma oppure ci scriva su WhatsApp, possibilmente almeno 24 ore prima.</p>
-      <p><em>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</em></p>
+      <InfoCallout icon="shield" tone="white"><p>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</p></InfoCallout>
     </div>
   </section>
 </Page>

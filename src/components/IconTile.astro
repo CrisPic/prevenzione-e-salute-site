@@ -1,0 +1,16 @@
+---
+// Square icon tile. size: 'm' = 48px (default), 's' = 40px. tone: 'soft' (teal-soft) or 'white'.
+import { icons } from './icons.js';
+const { icon, size = 'm', tone = 'soft', class: cls = '' } = Astro.props;
+const px = size === 's' ? 20 : 22;
+---
+<span class:list={['icon-tile', `icon-tile--${size}`, `icon-tile--${tone}`, cls]} aria-hidden="true">
+  <svg width={px} height={px} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={icons[icon]} />
+</span>
+
+<style>
+  .icon-tile { flex: 0 0 auto; display: grid; place-items: center; border-radius: var(--radius-s); color: var(--brand); background: var(--brand-soft); }
+  .icon-tile--m { width: var(--tile-m); height: var(--tile-m); }
+  .icon-tile--s { width: var(--tile-s); height: var(--tile-s); }
+  .icon-tile--white { background: #fff; }
+</style>

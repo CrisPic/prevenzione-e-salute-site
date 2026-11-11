@@ -1,0 +1,25 @@
+---
+// Dark summary card with the price (lime) and key facts. facts: [{ label, value }].
+const { label, price, facts = [], ctaHref, ctaLabel } = Astro.props;
+---
+<div class="price-card">
+  <svg class="price-card__pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h80l14-22 18 44 16-30 10 8h162" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  <p class="price-card__label">{label}</p>
+  <p class="price-card__price">{price}</p>
+  <dl class="price-card__facts">
+    {facts.map((f) => (<div><dt>{f.label}</dt><dd>{f.value}</dd></div>))}
+  </dl>
+  {ctaHref && <a class="btn btn-primary price-card__cta" href={ctaHref}>{ctaLabel}</a>}
+</div>
+
+<style>
+  .price-card { --focus: var(--accent); background: var(--brand-dark); color: #fff; border-radius: var(--radius-l); padding: 28px; box-shadow: 0 20px 50px rgba(10,63,68,.25); }
+  .price-card__pulse { width: 100%; height: 48px; margin-bottom: 8px; color: #a9cfcf; }
+  .price-card__label { margin: 0; color: #a9cfcf; font-weight: 600; }
+  .price-card__price { font-size: 64px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.03em; line-height: 1.1; color: var(--accent); }
+  .price-card__facts { margin: 0; }
+  .price-card__facts div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
+  .price-card__facts dt { color: #a9cfcf; }
+  .price-card__facts dd { margin: 0; font-weight: 700; }
+  .price-card__cta { width: 100%; margin-top: 16px; }
+</style>

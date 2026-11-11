@@ -1,0 +1,29 @@
+---
+// Numbered vertical timeline. steps: [{ title?, text }] or plain strings.
+const { steps = [] } = Astro.props;
+const items = steps.map((s) => (typeof s === 'string' ? { text: s } : s));
+---
+<ol class="timeline">
+  {items.map((s, i) => (
+    <li class:list={['timeline__item', { 'timeline__item--last': i === items.length - 1 }]}>
+      <span class="timeline__num" aria-hidden="true">{i + 1}</span>
+      <div class="timeline__body">
+        {s.title && <p class="timeline__title">{s.title}</p>}
+        <p class="timeline__text">{s.text}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline__item { position: relative; display: flex; gap: 16px; padding-bottom: 20px; }
+  .timeline__item:not(.timeline__item--last)::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: #9fc6c6; }
+  .timeline__item--last { padding-bottom: 0; }
+  .timeline__num { flex: 0 0 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 750; background: var(--brand); color: #fff; position: relative; }
+  .timeline__item--last .timeline__num { background: var(--brand-soft); color: var(--brand-dark); box-shadow: inset 0 0 0 2px var(--brand); }
+  .timeline__body { padding-top: 8px; }
+  .timeline__title { margin: 0; font-weight: 700; color: var(--brand-dark); }
+  .timeline__text { margin: 0; color: var(--text); }
+  .timeline__title + .timeline__text { color: var(--muted); font-size: 15px; }
+</style>

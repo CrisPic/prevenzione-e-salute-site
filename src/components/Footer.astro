@@ -14,17 +14,17 @@ import { site } from '../data/site.js';
     <div class="links">
       <a href="/privacy">Privacy policy</a>
       <a href="/privacy#cookie">Cookie policy</a>
-      <a href="/en/">English</a>
+      {site.showEnglish && <a href="/en/">English</a>}
     </div>
   </div>
 </footer>
 
 <style>
-  .footer { background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 110px; font-size: 14px; }
+  .footer { --focus: var(--accent); background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 calc(40px + var(--mbar-space)); font-size: 14px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
   .name { color: #fff; font-weight: 700; }
   p { margin: 0 0 8px; }
-  .links { display: flex; flex-direction: column; gap: 6px; }
+  .links { display: flex; flex-direction: column; }
+  .links a { min-height: 44px; display: inline-flex; align-items: center; }
   a { color: #fff; }
-  @media (min-width: 821px) { .footer { padding-bottom: 40px; } }
 </style>

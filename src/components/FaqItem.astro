@@ -1,0 +1,24 @@
+---
+// One FAQ entry. Native <details>: keyboard and screen-reader friendly, no JavaScript.
+const { q, a, open = false } = Astro.props;
+---
+<details class="faq" open={open}>
+  <summary class="faq__q">
+    <span>{q}</span>
+    <span class="faq__icon" aria-hidden="true"></span>
+  </summary>
+  <div class="faq__a">{a && <p>{a}</p>}<slot /></div>
+</details>
+
+<style>
+  .faq { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); }
+  .faq + .faq { margin-top: 10px; }
+  .faq__q { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 56px; padding: 14px 20px; cursor: pointer; font-weight: 650; color: var(--brand-dark); border-radius: var(--radius-m); }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__icon { flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--brand-soft); position: relative; }
+  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2.5px; border-radius: 2px; background: var(--brand); transform: translate(-50%, -50%); }
+  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform .15s; }
+  .faq[open] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .faq__a { padding: 0 20px 18px; color: var(--muted); }
+  .faq__a :global(p) { margin: 0; }
+</style>

@@ -1,0 +1,17 @@
+---
+// Teal-soft note with an icon. Put the text in the slot.
+import { icons } from './icons.js';
+const { icon = 'info', tone = 'soft' } = Astro.props;
+---
+<div class:list={['callout', `callout--${tone}`]}>
+  <svg class="callout__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[icon]} />
+  <div class="callout__body"><slot /></div>
+</div>
+
+<style>
+  .callout { display: flex; gap: 12px; align-items: flex-start; border-radius: var(--radius-m); padding: 16px 18px; color: var(--text); }
+  .callout--soft { background: var(--brand-soft); }
+  .callout--white { background: #fff; border: 1px solid var(--line); }
+  .callout__icon { flex: 0 0 auto; color: var(--brand); margin-top: 1px; }
+  .callout__body :global(p) { margin: 0; }
+</style>

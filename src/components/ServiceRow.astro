@@ -1,0 +1,28 @@
+---
+// One service: icon, title, price or tag, description. featured = teal card (the certificate).
+import IconTile from './IconTile.astro';
+const { icon, title, price, description, featured = false, headingLevel = 3 } = Astro.props;
+const H = `h${headingLevel}`;
+---
+<article class:list={['service', { 'service--featured': featured }]}>
+  <H class="service__title">{title}</H>
+  <div class="service__top">
+    <IconTile icon={icon} />
+    <p class:list={['service__price', { 'service__price--tag': !featured }]}>{price}</p>
+  </div>
+  {description && <p class="service__desc">{description}</p>}
+  <slot />
+</article>
+
+<style>
+  .service { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .service__top { order: -1; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .service__price { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: var(--brand-dark); }
+  .service__price--tag { font-size: 14px; font-weight: 700; letter-spacing: 0; background: var(--brand-soft); padding: 6px 12px; border-radius: 999px; }
+  .service__title { margin: 0; font-size: 21px; line-height: 1.2; color: var(--brand-dark); }
+  .service__desc { margin: 0; color: var(--muted); }
+  .service--featured { --focus: var(--accent); background: var(--brand); border-color: var(--brand); color: #fff; }
+  .service--featured .service__price { color: var(--accent); }
+  .service--featured .service__title { color: #fff; }
+  .service--featured .service__desc { color: #cfe3e3; }
+</style>
