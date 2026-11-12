@@ -28,9 +28,9 @@ export const booking = {
   daysAhead: 21,     // how far ahead patients can book
   minNoticeHours: 2, // no slots sooner than this
   services: [
-    { id: 'certificato', label: 'Certificato medico sportivo non agonistico', short: 'Certificato sportivo', price: `€${site.certificatePrice}`, minutes: 30, eventTypeId: null },
-    { id: 'pressione', label: 'Misurazione della pressione arteriosa', short: 'Pressione arteriosa', price: 'Su richiesta', minutes: 15, eventTypeId: null },
-    { id: 'controllo', label: 'Controlli di salute di base e prescrizioni', short: 'Controllo di salute', price: 'Su richiesta', minutes: 30, eventTypeId: null },
+    { id: 'certificato', label: 'Certificato medico sportivo non agonistico', short: 'Certificato sportivo', price: `€${site.certificatePrice}`, minutes: 30, eventTypeId: 7889004 },
+    { id: 'pressione', label: 'Misurazione della pressione arteriosa', short: 'Pressione arteriosa', price: 'Su richiesta', minutes: 15, eventTypeId: 7889006 },
+    { id: 'controllo', label: 'Controlli di salute di base e prescrizioni', short: 'Controllo di salute', price: 'Su richiesta', minutes: 30, eventTypeId: 7889005 },
   ],
   // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
   mockHours: { days: [1, 2, 3, 4, 5, 6], ranges: [['09:00', '13:00'], ['15:00', '19:00']] },

@@ -12,7 +12,7 @@
   },
   "vars": {
     // "off" | "mock" (demo, nothing saved) | "calcom" (needs secret CALCOM_API_KEY: npx wrangler secret put CALCOM_API_KEY)
-    "BOOKING_MODE": "mock"
+    "BOOKING_MODE": "calcom"
   },
   "observability": { "enabled": true }
 }
