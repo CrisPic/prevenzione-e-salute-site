@@ -56,7 +56,9 @@ export async function createBooking(input, cfg, env) {
   console.error('Cal.com booking failed', res.status, JSON.stringify(data));
   // Only a real availability conflict is shown to the patient as "slot taken";
   // auth (401/403) and other errors are setup problems -> generic error + WhatsApp fallback.
-  const msg = JSON.stringify(data.error || data).toLowerCase();
+  const msg = JSON.stringify(data).toLowerCase();
+  // e.g. "email_domain_cannot_receive_mail": point the patient at the email field
+  if (res.status === 400 && msg.includes('email')) return { error: 'invalid', field: 'email', status: 400 };
   const taken = res.status === 409 || (res.status === 400 && /available|availability|booked|taken|conflict|no longer/.test(msg));
   return taken ? { error: 'slot_taken', status: 409 } : { error: 'server', status: 502 };
 }

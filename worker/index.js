@@ -52,7 +52,7 @@ export default {
         if (input.spam) return json({ ok: true, demo: true }); // honeypot filled: pretend success
 
         const result = await engine.createBooking(input, booking, env);
-        if (result.error) return json({ ok: false, error: result.error }, result.status || 409);
+        if (result.error) return json({ ok: false, error: result.error, field: result.field }, result.status || 409);
         return json({ ok: true, demo: engine === mock, start: input.start, service: input.service.id });
       }
 
