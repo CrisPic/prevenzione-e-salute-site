@@ -3,7 +3,7 @@ import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
 import ServiceRow from '../components/ServiceRow.astro';
 import FaqItem from '../components/FaqItem.astro';
-const bookHref = site.bookingUrl || '/prenota';
+const bookHref = site.bookingUrl || '/prenota/';
 const services = [
   { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
   { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },
@@ -17,8 +17,13 @@ const faq = [
   ['Posso venire senza prenotazione?', "Sì, negli orari di apertura, ma la prenotazione online garantisce l'orario."],
   ['Anche per bambini e ragazzi?', 'Sì, con la presenza di un genitore o tutore.'],
 ];
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
 ---
-<Page title="Servizi e prezzi | Prevenzione e Salute – Milano" description="Certificato medico sportivo non agonistico €50, misurazione della pressione e controlli di salute di base presso GetFIT, Via Piacenza 4, Milano." eyebrow="Servizi" heading="Servizi e prezzi" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
+<Page schema={faqSchema} title="Servizi e prezzi: certificato sportivo €50 | Prevenzione e Salute" description="Certificato medico sportivo non agonistico €50, misurazione della pressione e controlli di salute di base presso GetFIT, Via Piacenza 4, Milano." eyebrow="Servizi" heading="Servizi e prezzi" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
   <section>
     <div class="container stack">
       {services.map((s, i) => (

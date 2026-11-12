@@ -1,7 +1,13 @@
 ---
 import '@fontsource-variable/inter';
 import { site } from '../data/site.js';
-const { title, description, lang = 'it' } = Astro.props;
+// schema: optional JSON-LD object or array of objects for this page.
+// noindex: force noindex on one page (e.g. 404); site.indexable=false sets it everywhere.
+const { title, description, lang = 'it', schema, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og-image.png', Astro.site).href;
+const robots = noindex || !site.indexable ? 'noindex, follow' : null;
+const schemas = schema ? [schema].flat() : [];
 ---
 <!doctype html>
 <html lang={lang}>
@@ -11,9 +17,29 @@ const { title, description, lang = 'it' } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
+    {!noindex && <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#0f5c63" />
     {site.showEnglish && <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />}
     {site.showEnglish && <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />}
+    {site.showEnglish && <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_GB' : 'it_IT'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Prevenzione e Salute – certificato medico sportivo non agonistico a Milano, €50" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
   <body>
     <a class="skip-link" href="#main">Vai al contenuto</a>

@@ -6,10 +6,10 @@ import MobileBar from '../components/MobileBar.astro';
 import PriceCard from '../components/PriceCard.astro';
 import ServiceRow from '../components/ServiceRow.astro';
 import StepTimeline from '../components/StepTimeline.astro';
-import { site } from '../data/site.js';
+import { site, clinicSchema } from '../data/site.js';
 
-const bookHref = site.bookingUrl || '/prenota';
-const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti';
+const bookHref = site.bookingUrl || '/prenota/';
+const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti/';
 
 const points = [
   { t: 'Dove si allena', d: 'Lo studio è al primo piano di GetFIT, in Via Piacenza 4.' },
@@ -35,8 +35,9 @@ const steps = [
 ];
 ---
 <Base
-  title="Certificato medico sportivo non agonistico a Milano – €50 | Prevenzione e Salute"
-  description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Prenotazione online.">
+  title="Certificato medico sportivo a Milano – €50 | Prevenzione e Salute"
+  description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Visita di 20–30 minuti, certificato subito."
+  schema={clinicSchema(Astro.site)}>
   <Header />
   <main id="main" tabindex="-1">
     <section class="hero">
@@ -63,12 +64,12 @@ const steps = [
       </div>
     </section>
 
-    <section class="points">
+    <section class="points" aria-label="In breve">
       <div class="container three">
         {points.map((p, i) => (
           <div class="point">
             <span class="num">0{i + 1}</span>
-            <h3>{p.t}</h3>
+            <p class="point__title">{p.t}</p>
             <p>{p.d}</p>
           </div>
         ))}
@@ -84,7 +85,7 @@ const steps = [
             <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} />
           ))}
         </div>
-        <p class="more"><a href="/servizi">Scopri i servizi →</a></p>
+        <p class="more"><a href="/servizi/">Scopri i servizi →</a></p>
       </div>
     </section>
 
@@ -96,7 +97,7 @@ const steps = [
           <ul class="checks">
             {audience.map((a) => <li>{a}</li>)}
           </ul>
-          <a class="btn btn-dark" href="/partner">Per palestre e aziende</a>
+          <a class="btn btn-dark" href="/partner/">Per palestre e aziende</a>
         </div>
         <div>
           <p class="eyebrow">Come funziona</p>
@@ -135,8 +136,8 @@ const steps = [
   .points { padding: 0 0 24px; }
   .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .point { padding: 8px 0; }
-  .num { font-weight: 800; color: var(--accent-dark); font-size: 14px; }
-  .point h3 { margin: 6px 0; font-size: 20px; }
+  .num { font-weight: 800; color: var(--brand); font-size: 14px; }
+  .point__title { margin: 6px 0; font-size: 20px; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--brand-dark); }
   .point p { margin: 0; color: var(--muted); }
   .more { margin-top: 20px; font-weight: 650; }
   .band { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }

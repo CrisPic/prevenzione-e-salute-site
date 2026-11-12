@@ -4,7 +4,7 @@ import { site } from '../data/site.js';
 import InfoCallout from '../components/InfoCallout.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico presso GetFIT, Via Piacenza 4, Milano." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email e un promemoria il giorno prima.">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico (€50) presso GetFIT, Via Piacenza 4, Milano. Oppure ci scriva su WhatsApp o ci chiami." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email e un promemoria il giorno prima.">
   <section>
     <div class="container prose">
       {site.bookingUrl
@@ -12,8 +12,8 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
         : <InfoCallout icon="calendar"><p>Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p></InfoCallout>}
       <h2>Preferisce scriverci o chiamare?</h2>
       <div class="actions">
-        <a class="btn btn-dark" href={wa || '/contatti'}>Scrivici su WhatsApp</a>
-        <a class="btn" href={site.phone ? `tel:${site.phone}` : '/contatti'}>Chiama{site.phone ? `: ${site.phone}` : ''}</a>
+        <a class="btn btn-dark" href={wa || '/contatti/'}>Scrivici su WhatsApp</a>
+        <a class="btn" href={site.phone ? `tel:${site.phone}` : '/contatti/'}>Chiama{site.phone ? `: ${site.phone}` : ''}</a>
       </div>
       <h2>Disdire o spostare un appuntamento</h2>
       <p>Usi il link nell'email di conferma oppure ci scriva su WhatsApp, possibilmente almeno 24 ore prima.</p>

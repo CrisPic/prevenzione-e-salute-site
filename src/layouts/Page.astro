@@ -3,9 +3,9 @@ import Base from './Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MobileBar from '../components/MobileBar.astro';
-const { title, description, eyebrow, heading, intro } = Astro.props;
+const { title, description, eyebrow, heading, intro, schema, noindex } = Astro.props;
 ---
-<Base title={title} description={description}>
+<Base title={title} description={description} schema={schema} noindex={noindex}>
   <Header />
   <main id="main" tabindex="-1">
     <section class="page-hero">

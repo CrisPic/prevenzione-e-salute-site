@@ -1,11 +1,11 @@
 ---
 import { site } from '../data/site.js';
-const bookHref = site.bookingUrl || '/prenota';
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const bookHref = site.bookingUrl || '/prenota/';
+const path = Astro.url.pathname.replace(/\/?$/, '/');
 const links = [
-  { href: '/servizi', label: 'Servizi' },
-  { href: '/partner', label: 'Per palestre e aziende' },
-  { href: '/contatti', label: 'Contatti' },
+  { href: '/servizi/', label: 'Servizi' },
+  { href: '/partner/', label: 'Per palestre e aziende' },
+  { href: '/contatti/', label: 'Contatti' },
 ];
 const current = (href) => (path === href ? 'page' : undefined);
 ---
