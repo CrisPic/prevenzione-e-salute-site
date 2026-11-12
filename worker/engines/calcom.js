@@ -54,6 +54,9 @@ export async function createBooking(input, cfg, env) {
   });
   if (res.ok) return { ok: true, uid: data.data?.uid };
   console.error('Cal.com booking failed', res.status, JSON.stringify(data));
-  // 4xx from Cal.com almost always means the slot is no longer free
-  return res.status >= 400 && res.status < 500 ? { error: 'slot_taken', status: 409 } : { error: 'server', status: 502 };
+  // Only a real availability conflict is shown to the patient as "slot taken";
+  // auth (401/403) and other errors are setup problems -> generic error + WhatsApp fallback.
+  const msg = JSON.stringify(data.error || data).toLowerCase();
+  const taken = res.status === 409 || (res.status === 400 && /available|availability|booked|taken|conflict|no longer/.test(msg));
+  return taken ? { error: 'slot_taken', status: 409 } : { error: 'server', status: 502 };
 }
