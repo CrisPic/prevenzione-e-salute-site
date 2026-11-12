@@ -30,7 +30,8 @@ export default {
     if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(request);
 
     const engine = engineFor(env);
-    if (!engine) return json({ ok: false, error: 'disabled' }, 503);
+    // Diagnostic only (no secret values): which mode is set and whether the API key is present
+    if (!engine) return json({ ok: false, error: 'disabled', mode: env.BOOKING_MODE || null, hasKey: Boolean(env.CALCOM_API_KEY) }, 503);
 
     try {
       if (url.pathname === '/api/booking/slots' && request.method === 'GET') {
