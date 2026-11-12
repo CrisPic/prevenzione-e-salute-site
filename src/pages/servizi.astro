@@ -1,9 +1,8 @@
 ---
 import Page from '../layouts/Page.astro';
-import { site } from '../data/site.js';
 import ServiceRow from '../components/ServiceRow.astro';
 import FaqItem from '../components/FaqItem.astro';
-const bookHref = site.bookingUrl || '/prenota/';
+const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 const services = [
   { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: "Necessario per svolgere attività sportiva non agonistica presso palestre, associazioni e società sportive, e per le attività sportive parascolastiche. La visita comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato è valido 12 mesi dalla data di rilascio." },
   { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido della pressione, utile per chi si allena o vuole monitorarla nel tempo.' },

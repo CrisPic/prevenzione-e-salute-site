@@ -8,3 +8,7 @@ dist/
 # Local AI context (not published)
 CLAUDE.md
 TASKS.md
+
+# Local Worker secrets
+.dev.vars
+.wrangler/

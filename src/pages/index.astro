@@ -8,7 +8,7 @@ import ServiceRow from '../components/ServiceRow.astro';
 import StepTimeline from '../components/StepTimeline.astro';
 import { site, clinicSchema } from '../data/site.js';
 
-const bookHref = site.bookingUrl || '/prenota/';
+const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti/';
 
 const points = [

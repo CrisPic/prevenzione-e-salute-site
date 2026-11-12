@@ -8,7 +8,6 @@ export const site = {
   phone: '',      // TODO
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
   email: '',      // TODO
-  bookingUrl: '', // TODO: Cal.com / Calendly link
   vat: '[P.IVA]', // TODO
   pec: '[PEC]',   // TODO
   certificatePrice: 50,
@@ -16,6 +15,25 @@ export const site = {
   // false = every page gets <meta name="robots" content="noindex">.
   // Flip to true once the domain is live and the placeholders (phone, P.IVA, hours) are filled.
   indexable: false,
+};
+
+// Online booking (Prenota page + Worker API in worker/index.js).
+// The engine is picked by the Worker variable BOOKING_MODE in wrangler.jsonc:
+//   "off"    -> form hidden, WhatsApp/phone fallback shown
+//   "mock"   -> demo slots, nothing is saved (a "demo" notice is shown)
+//   "calcom" -> real slots/bookings via the Cal.com API (needs secret CALCOM_API_KEY
+//               and an eventTypeId for each service below)
+export const booking = {
+  timeZone: 'Europe/Rome',
+  daysAhead: 21,     // how far ahead patients can book
+  minNoticeHours: 2, // no slots sooner than this
+  services: [
+    { id: 'certificato', label: 'Certificato medico sportivo non agonistico', short: 'Certificato sportivo', price: `€${site.certificatePrice}`, minutes: 30, eventTypeId: null },
+    { id: 'pressione', label: 'Misurazione della pressione arteriosa', short: 'Pressione arteriosa', price: 'Su richiesta', minutes: 15, eventTypeId: null },
+    { id: 'controllo', label: 'Controlli di salute di base e prescrizioni', short: 'Controllo di salute', price: 'Su richiesta', minutes: 30, eventTypeId: null },
+  ],
+  // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
+  mockHours: { days: [1, 2, 3, 4, 5, 6], ranges: [['09:00', '13:00'], ['15:00', '19:00']] },
 };
 
 // Schema.org data for the studio (JSON-LD). Empty fields are left out.

@@ -1,0 +1,330 @@
+---
+// Native booking form: service -> day -> time -> contact details -> confirm.
+// Talks only to our own Worker (/api/booking*). Without JS, or when booking is off,
+// the fallback callout (WhatsApp / phone) stays visible and the form stays hidden.
+import { booking } from '../data/site.js';
+import InfoCallout from './InfoCallout.astro';
+const tz = booking.timeZone;
+---
+<div class="bk" data-bk data-tz={tz}>
+  <div data-bk-fallback>
+    <InfoCallout icon="calendar"><p>Il calendario di prenotazione online non è disponibile in questo momento. Può prenotare su WhatsApp o per telefono.</p></InfoCallout>
+  </div>
+
+  <form class="bk-form" data-bk-form novalidate hidden>
+    <p class="bk-demo" data-bk-demo hidden><strong>Versione dimostrativa.</strong> Gli orari sono di esempio e nessuna prenotazione viene registrata.</p>
+
+    <fieldset class="bk-step">
+      <legend><span class="bk-num">1</span> Servizio</legend>
+      <div class="bk-services">
+        {booking.services.map((s, i) => (
+          <label class="bk-service">
+            <input type="radio" name="service" value={s.id} data-label={s.label} checked={i === 0} />
+            <span class="bk-service__name">{s.label}</span>
+            <span class="bk-service__meta">{s.price}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <fieldset class="bk-step">
+      <legend><span class="bk-num">2</span> Giorno</legend>
+      <div class="bk-days" data-bk-days><p class="bk-muted">Caricamento degli orari disponibili…</p></div>
+    </fieldset>
+
+    <fieldset class="bk-step">
+      <legend><span class="bk-num">3</span> Orario</legend>
+      <div data-bk-times><p class="bk-muted">Scelga prima un giorno.</p></div>
+    </fieldset>
+
+    <fieldset class="bk-step">
+      <legend><span class="bk-num">4</span> I suoi dati</legend>
+      <div class="bk-fields">
+        <label class="bk-field">
+          <span>Nome e cognome</span>
+          <input name="name" autocomplete="name" required minlength="3" maxlength="80" />
+          <small class="bk-err" data-err="name">Inserisca nome e cognome.</small>
+        </label>
+        <label class="bk-field">
+          <span>Telefono</span>
+          <input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="es. 333 123 4567" />
+          <small class="bk-err" data-err="phone">Inserisca un numero di telefono valido.</small>
+        </label>
+        <label class="bk-field">
+          <span>Email</span>
+          <input name="email" type="email" autocomplete="email" required maxlength="120" />
+          <small class="bk-err" data-err="email">Inserisca un indirizzo email valido.</small>
+        </label>
+        <!-- Honeypot: hidden from people, bots fill it in -->
+        <label class="bk-hp" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off" /></label>
+        <label class="bk-check">
+          <input type="checkbox" name="privacy" required />
+          <span>Ho letto l'<a href="/privacy/#prenotazioni" target="_blank">informativa privacy</a>.</span>
+        </label>
+        <small class="bk-err" data-err="privacy">È necessario confermare di aver letto l'informativa.</small>
+      </div>
+      <p class="bk-note">Non inserisca informazioni sulla sua salute: le chiederà il medico durante la visita.</p>
+    </fieldset>
+
+    <div class="bk-summary" data-bk-summary hidden></div>
+    <p class="bk-alert" data-bk-alert role="alert" hidden></p>
+    <button type="submit" class="btn btn-primary bk-submit" data-bk-submit>Conferma la prenotazione</button>
+  </form>
+
+  <div class="bk-done" data-bk-done hidden tabindex="-1">
+    <p class="bk-done__tag">Prenotazione confermata</p>
+    <h2 class="bk-done__title" data-bk-done-when></h2>
+    <p data-bk-done-what></p>
+    <p data-bk-done-mail>Le abbiamo inviato un'email di conferma con il link per disdire o spostare l'appuntamento.</p>
+    <p class="bk-muted">Studio medico c/o GetFIT, Via Piacenza 4, primo piano, Milano. Porti un documento d'identità e la tessera sanitaria.</p>
+  </div>
+</div>
+
+<script>
+  type Slot = { time: string; start: string };
+  type Day = { date: string; slots: Slot[] };
+
+  const root = document.querySelector<HTMLElement>('[data-bk]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const tz = root.dataset.tz!;
+    const $ = <T extends Element = HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const form = $<HTMLFormElement>('[data-bk-form]');
+    const daysBox = $('[data-bk-days]');
+    const timesBox = $('[data-bk-times]');
+    const summary = $('[data-bk-summary]');
+    const alertBox = $('[data-bk-alert]');
+    const submit = $<HTMLButtonElement>('[data-bk-submit]');
+
+    const fmtDay = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+    const fmtLong = new Intl.DateTimeFormat('it-IT', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+    const noon = (d: string) => new Date(`${d}T12:00:00Z`);
+
+    let days: Day[] = [];
+    let chosenDate = '';
+    let chosenSlot: Slot | null = null;
+
+    const service = () => form.querySelector<HTMLInputElement>('input[name=service]:checked')!;
+
+    async function loadSlots() {
+      chosenDate = '';
+      chosenSlot = null;
+      daysBox.innerHTML = '<p class="bk-muted">Caricamento degli orari disponibili…</p>';
+      timesBox.innerHTML = '<p class="bk-muted">Scelga prima un giorno.</p>';
+      updateSummary();
+      try {
+        const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`);
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error);
+        root.querySelector('[data-bk-fallback]')!.setAttribute('hidden', '');
+        form.hidden = false;
+        $('[data-bk-demo]').hidden = !data.demo;
+        root.dataset.demo = data.demo ? '1' : '';
+        days = data.days;
+        renderDays();
+      } catch {
+        if (form.hidden) return; // keep the fallback callout
+        daysBox.innerHTML = '<p class="bk-muted">Non riusciamo a caricare gli orari. Ricarichi la pagina o ci contatti su WhatsApp.</p>';
+      }
+    }
+
+    function renderDays() {
+      const open = days.filter((d) => d.slots.length);
+      if (!open.length) {
+        daysBox.innerHTML = '<p class="bk-muted">Nessun orario libero nei prossimi giorni. Ci contatti su WhatsApp o per telefono.</p>';
+        return;
+      }
+      daysBox.innerHTML = '';
+      for (const d of days) {
+        const [wd, num, mon] = fmtDay.format(noon(d.date)).replace(',', '').split(' ');
+        const label = document.createElement('label');
+        label.className = 'bk-day';
+        label.innerHTML = `<input type="radio" name="day" value="${d.date}" ${d.slots.length ? '' : 'disabled'}>
+          <span class="bk-day__wd">${wd}</span><span class="bk-day__num">${num}</span><span class="bk-day__mon">${mon}</span>`;
+        label.title = d.slots.length ? `${d.slots.length} orari liberi` : 'Nessun orario libero';
+        daysBox.append(label);
+      }
+    }
+
+    function renderTimes() {
+      const day = days.find((d) => d.date === chosenDate);
+      if (!day) return;
+      const groups: [string, Slot[]][] = [
+        ['Mattina', day.slots.filter((s) => s.time < '13:00')],
+        ['Pomeriggio', day.slots.filter((s) => s.time >= '13:00')],
+      ];
+      timesBox.innerHTML = '';
+      for (const [name, slots] of groups) {
+        if (!slots.length) continue;
+        const g = document.createElement('div');
+        g.className = 'bk-timegroup';
+        g.innerHTML = `<p class="bk-timegroup__name">${name}</p><div class="bk-times"></div>`;
+        const grid = g.querySelector('.bk-times')!;
+        for (const s of slots) {
+          const l = document.createElement('label');
+          l.className = 'bk-time';
+          l.innerHTML = `<input type="radio" name="time" value="${s.start}"><span>${s.time}</span>`;
+          grid.append(l);
+        }
+        timesBox.append(g);
+      }
+    }
+
+    function updateSummary() {
+      if (!chosenSlot) { summary.hidden = true; return; }
+      summary.hidden = false;
+      summary.innerHTML = `<span class="bk-muted">Riepilogo</span><strong>${service().dataset.label}</strong><span>${capitalize(fmtLong.format(new Date(chosenSlot.start)))}</span>`;
+    }
+
+    const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+    function showError(field: string, on: boolean) {
+      const err = root.querySelector<HTMLElement>(`[data-err="${field}"]`);
+      const input = form.elements.namedItem(field) as HTMLInputElement | null;
+      if (err) err.classList.toggle('is-on', on);
+      if (input) input.setAttribute('aria-invalid', on ? 'true' : 'false');
+    }
+
+    function validate() {
+      const f = form.elements as any;
+      const checks: [string, boolean][] = [
+        ['name', f.name.value.trim().length >= 3],
+        ['phone', /^\+?[\d\s.\-()/]{8,20}$/.test(f.phone.value.trim())],
+        ['email', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())],
+        ['privacy', f.privacy.checked],
+      ];
+      let firstBad: string | null = null;
+      for (const [k, ok] of checks) { showError(k, !ok); if (!ok && !firstBad) firstBad = k; }
+      if (!chosenSlot) { alert('Scelga un giorno e un orario.'); daysBox.scrollIntoView({ block: 'center' }); return false; }
+      if (firstBad) { (f[firstBad] as HTMLElement).focus(); return false; }
+      return true;
+    }
+
+    function alert(msg: string) { alertBox.textContent = msg; alertBox.hidden = !msg; }
+
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name === 'service') loadSlots();
+      if (t.name === 'day') { chosenDate = t.value; chosenSlot = null; renderTimes(); updateSummary(); alert(''); }
+      if (t.name === 'time') { chosenSlot = days.find((d) => d.date === chosenDate)!.slots.find((s) => s.start === t.value) || null; updateSummary(); alert(''); }
+      if (['name', 'phone', 'email', 'privacy'].includes(t.name)) showError(t.name, false);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alert('');
+      if (!validate()) return;
+      const f = form.elements as any;
+      submit.disabled = true;
+      submit.textContent = 'Invio in corso…';
+      try {
+        const res = await fetch('/api/booking', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            service: service().value, start: chosenSlot!.start,
+            name: f.name.value, phone: f.phone.value, email: f.email.value,
+            privacy: f.privacy.checked, website: f.website.value,
+          }),
+        });
+        const data = await res.json();
+        if (data.ok) return done(!!data.demo);
+        if (data.error === 'slot_taken') { alert('Questo orario è appena stato prenotato da un\'altra persona. Ne scelga un altro.'); await loadSlots(); }
+        else if (data.field) { showError(data.field, true); alert('Controlli i dati inseriti.'); }
+        else alert('Non siamo riusciti a completare la prenotazione. Riprovi tra poco o ci scriva su WhatsApp.');
+      } catch {
+        alert('Connessione non riuscita. Controlli la rete e riprovi.');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Conferma la prenotazione';
+      }
+    });
+
+    function done(demo: boolean) {
+      const box = $('[data-bk-done]');
+      $('[data-bk-done-when]').textContent = capitalize(fmtLong.format(new Date(chosenSlot!.start)));
+      $('[data-bk-done-what]').textContent = service().dataset.label!;
+      if (demo) $('[data-bk-done-mail]').textContent = 'Versione dimostrativa: nessuna prenotazione è stata registrata e nessuna email è stata inviata.';
+      form.hidden = true;
+      box.hidden = false;
+      box.focus();
+      box.scrollIntoView({ block: 'start' });
+    }
+
+    loadSlots();
+  }
+</script>
+
+<style>
+  .bk { margin: 8px 0 24px; }
+  .bk-form { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 8px 24px 24px; }
+  .bk-demo { margin: 16px 0 0; padding: 10px 14px; background: #fff7d6; border-radius: var(--radius-s); font-size: 15px; }
+  .bk-step { border: 0; margin: 0; padding: 20px 0 4px; min-width: 0; }
+  .bk-step + .bk-step { border-top: 1px solid var(--line); }
+  .bk-step legend { display: flex; align-items: center; gap: 10px; float: left; width: 100%; margin-bottom: 14px; font-weight: 700; font-size: 18px; color: var(--brand-dark); }
+  .bk-step legend + * { clear: both; }
+  .bk-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-size: 14px; }
+  .bk-muted { color: var(--muted); margin: 0; }
+  .bk :global(input[type=radio]) { position: absolute; opacity: 0; width: 1px; height: 1px; }
+
+  /* Selectable tiles (service, day, time) share one look */
+  .bk-service, .bk :global(.bk-day), .bk :global(.bk-time) { position: relative; cursor: pointer; border: 2px solid var(--line); border-radius: var(--radius-s); background: #fff; transition: border-color .15s, background .15s; }
+  .bk-service:hover, .bk :global(.bk-day:hover), .bk :global(.bk-time:hover) { border-color: var(--brand); }
+  .bk-service:has(input:checked), .bk :global(.bk-day:has(input:checked)), .bk :global(.bk-time:has(input:checked)) { border-color: var(--brand); background: var(--brand-soft); }
+  .bk-service:has(input:focus-visible), .bk :global(.bk-day:has(input:focus-visible)), .bk :global(.bk-time:has(input:focus-visible)) { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .bk-services { display: grid; gap: 10px; }
+  .bk-service { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; }
+  .bk-service__name { font-weight: 600; }
+  .bk-service__meta { flex: 0 0 auto; font-size: 15px; color: var(--muted); }
+  .bk-service:has(input:checked) .bk-service__meta { color: var(--brand-dark); font-weight: 600; }
+
+  .bk-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .bk :global(.bk-day) { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; min-height: 76px; line-height: 1.2; }
+  .bk :global(.bk-day__wd), .bk :global(.bk-day__mon) { font-size: 13px; color: var(--muted); text-transform: capitalize; }
+  .bk :global(.bk-day__num) { font-size: 20px; font-weight: 700; color: var(--brand-dark); margin: 2px 0; }
+  .bk :global(.bk-day:has(input:disabled)) { cursor: default; opacity: .4; background: transparent; border-style: dashed; }
+  .bk :global(.bk-day:has(input:disabled):hover) { border-color: var(--line); }
+
+  .bk :global(.bk-timegroup__name) { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .bk :global(.bk-timegroup + .bk-timegroup) { margin-top: 14px; }
+  .bk :global(.bk-times) { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+  .bk :global(.bk-time) { display: grid; place-items: center; min-height: 48px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .bk-fields { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+  .bk-field { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+  .bk-field:first-child { grid-column: 1 / -1; }
+  .bk-field input { font: inherit; font-weight: 400; min-height: 48px; padding: 10px 14px; border: 2px solid var(--line); border-radius: var(--radius-s); background: #fff; color: var(--text); }
+  .bk-field input:focus { border-color: var(--brand); }
+  .bk-field input[aria-invalid=true] { border-color: #b3261e; }
+  .bk-check { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; min-height: 44px; }
+  .bk-check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--brand); flex: 0 0 auto; }
+  .bk-err { display: none; color: #b3261e; font-weight: 500; font-size: 14px; }
+  .bk-err.is-on { display: block; }
+  .bk-fields > .bk-err { grid-column: 1 / -1; margin-top: -8px; }
+  .bk-hp { position: absolute; left: -9999px; }
+  .bk-note { font-size: 14px; color: var(--muted); margin: 14px 0 0; }
+
+  .bk-summary { display: grid; gap: 2px; margin: 20px 0 0; padding: 14px 16px; background: var(--brand-soft); border-radius: var(--radius-s); }
+  .bk-summary :global(.bk-muted) { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .bk-alert { margin: 16px 0 0; padding: 12px 14px; border-radius: var(--radius-s); background: #fdecea; color: #8c1d18; font-weight: 500; }
+  .bk-submit { width: 100%; margin-top: 20px; font: inherit; font-weight: 700; cursor: pointer; }
+  .bk-submit:disabled { opacity: .7; cursor: progress; }
+
+  .bk-done { background: var(--brand-soft); border-radius: var(--radius-l); padding: 28px 24px; }
+  .bk-done:focus { outline: none; }
+  .bk-done__tag { display: inline-block; margin: 0 0 10px; padding: 4px 12px; border-radius: 999px; background: var(--accent); color: var(--brand-dark); font-weight: 700; font-size: 14px; }
+  .bk-done__title { margin: 0 0 6px; font-size: 26px; }
+  .bk-done p { margin: 0 0 10px; }
+
+  @media (max-width: 640px) {
+    .bk-form { padding: 4px 16px 20px; border-radius: var(--radius-m); }
+    .bk-fields { grid-template-columns: 1fr; }
+    /* Days: one swipeable row on phones */
+    .bk-days { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 8px; scrollbar-width: none; }
+    .bk :global(.bk-day) { flex: 0 0 64px; scroll-snap-align: start; }
+    .bk-service { padding: 10px 14px; font-size: 16px; line-height: 1.35; }
+    .bk-service__meta { font-size: 14px; }
+  }
+</style>

@@ -2,14 +2,13 @@
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
 import InfoCallout from '../components/InfoCallout.astro';
+import BookingForm from '../components/BookingForm.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico (€50) presso GetFIT, Via Piacenza 4, Milano. Oppure ci scriva su WhatsApp o ci chiami." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email e un promemoria il giorno prima.">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico (€50) presso GetFIT, Via Piacenza 4, Milano. Oppure ci scriva su WhatsApp o ci chiami." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
   <section>
     <div class="container prose">
-      {site.bookingUrl
-        ? <iframe src={site.bookingUrl} title="Calendario di prenotazione" style="width:100%;min-height:720px;border:1px solid var(--line);border-radius:var(--radius-m);background:#fff" loading="lazy"></iframe>
-        : <InfoCallout icon="calendar"><p>Il calendario di prenotazione online è in arrivo. Nel frattempo può prenotare su WhatsApp o per telefono.</p></InfoCallout>}
+      <BookingForm />
       <h2>Preferisce scriverci o chiamare?</h2>
       <div class="actions">
         <a class="btn btn-dark" href={wa || '/contatti/'}>Scrivici su WhatsApp</a>

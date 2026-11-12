@@ -1,7 +1,6 @@
 ---
 import Page from '../layouts/Page.astro';
-import { site } from '../data/site.js';
-const bookHref = site.bookingUrl || '/prenota/';
+const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 ---
 <Page noindex title="Pagina non trovata | Prevenzione e Salute" description="La pagina cercata non esiste o è stata spostata." eyebrow="Errore 404" heading="Pagina non trovata" intro="La pagina che cerca non esiste o è stata spostata.">
   <section>

@@ -1,6 +1,6 @@
 ---
 import { site } from '../data/site.js';
-const bookHref = site.bookingUrl || '/prenota/';
+const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contatti/';
 const tel = site.phone ? `tel:${site.phone}` : '/contatti/';
 ---
