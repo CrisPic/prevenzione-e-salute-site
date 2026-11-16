@@ -1,26 +1,60 @@
 ---
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
-import InfoCallout from '../components/InfoCallout.astro';
 import BookingForm from '../components/BookingForm.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
-  <section>
-    <div class="container prose">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." kicker="Prenotazione online" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
+  <div class="book container">
+    <aside class="book__facts" aria-labelledby="prima-h">
+      <h2 id="prima-h" class="visually-hidden">Prima di prenotare</h2>
+      <dl class="facts">
+        <div><dt>Visita</dt><dd>Circa 10 minuti</dd></div>
+        <div><dt>Dove</dt><dd>{site.address}<small>{site.venue}</small></dd></div>
+        <div><dt>Da portare</dt><dd>Documento d'identità e tessera sanitaria</dd></div>
+      </dl>
+    </aside>
+    <div class="book__form">
       <BookingForm />
-      {(wa || site.phone) && (
-        <>
-          <h2>Preferisce scriverci o chiamare?</h2>
+    </div>
+  </div>
+
+  {(wa || site.phone) && (
+    <section class="sec" aria-labelledby="altri-h">
+      <div class="container">
+        <div class="sec-head"><h2 id="altri-h">Preferisce scriverci o chiamare?</h2></div>
+        <div class="sec-body">
           <div class="actions">
             {wa && <a class="btn" href={wa}>Ci scriva su WhatsApp</a>}
             {site.phone && <a class="btn" href={`tel:${site.phone}`}>Ci chiami: {site.phone}</a>}
           </div>
-        </>
-      )}
-      <h2>Disdire o spostare un appuntamento</h2>
-      <p>Usi il link nell'email di conferma{wa ? ' oppure ci scriva su WhatsApp' : ''}, possibilmente almeno 24 ore prima.</p>
-      <InfoCallout icon="shield" tone="white"><p>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</p></InfoCallout>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="sec" aria-labelledby="disdire-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="disdire-h">Disdire o spostare un appuntamento</h2></div>
+      <div class="sec-body">
+        <p>Usi il link nell'email di conferma{wa ? ' oppure ci scriva su WhatsApp' : ''}, possibilmente almeno 24 ore prima.</p>
+      </div>
     </div>
   </section>
 </Page>
+
+<style>
+  .book { display: grid; gap: var(--space-8); padding-bottom: var(--space-12); }
+  /* Grid items default to min-width:auto: the swipeable day strip would widen the page */
+  .book > * { min-width: 0; }
+  /* Phones: a compact recap, so the form starts near the first screen */
+  @media (max-width: 820px) {
+    .book { gap: var(--space-6); }
+    .book__facts .facts > div { grid-template-columns: 6.5rem 1fr; padding: var(--space-2) 0; font-size: var(--fs-sm); }
+  }
+  @media (min-width: 821px) {
+    .book { grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr); align-items: start; column-gap: var(--space-12); padding-bottom: var(--space-16); }
+    .book__facts { grid-column: 2; grid-row: 1; position: sticky; top: calc(var(--header-h) + var(--space-6)); }
+    .book__form { grid-column: 1; grid-row: 1; }
+  }
+</style>

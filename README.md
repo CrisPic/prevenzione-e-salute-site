@@ -16,7 +16,8 @@ npm run build    # output in dist/
 ## Structure
 
 - `src/data/site.js` – address, phone, prices, booking link (single source of truth)
-- `src/layouts/` – page layouts
+- `src/layouts/` – page layouts; `Base.astro` holds the design tokens
+- `DESIGN.md` – design system conventions (spacing, type, colour, patterns)
 - `src/pages/` – Italian pages at `/`, English pages in `src/pages/en/`
 
 ## Deploy

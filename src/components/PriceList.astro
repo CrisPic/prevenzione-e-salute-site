@@ -1,0 +1,26 @@
+---
+// Services as a price list: name + one line on the left, price on the right. No cards.
+// items: serviceInfo entries from site.js. headingLevel: level of each service name.
+const { items = [], headingLevel = 3, detailed = false } = Astro.props;
+const H = `h${headingLevel}`;
+---
+<ul class="plist">
+  {items.map((s) => (
+    <li class="plist__row" id={detailed ? s.id : undefined}>
+      <H class="plist__name">{s.title}</H>
+      <p class="plist__price">{s.price}</p>
+      <p class="plist__desc">{detailed ? s.details : s.summary}</p>
+      <slot name={s.id} />
+    </li>
+  ))}
+</ul>
+
+<style>
+  .plist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .plist__row { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
+  .plist__name { grid-column: 1; margin: 0; font-size: var(--fs-md); line-height: 1.3; letter-spacing: -0.01em; }
+  .plist__price { grid-column: 2; grid-row: 1; margin: 0; font-weight: var(--fw-bold); color: var(--brand-dark); white-space: nowrap; font-variant-numeric: tabular-nums; font-size: var(--fs-md); line-height: 1.3; }
+  .plist__desc { grid-column: 1 / -1; margin: 0; color: var(--muted); max-width: 60ch; }
+  .plist__row > :global(:not(.plist__name, .plist__price, .plist__desc)) { grid-column: 1 / -1; }
+  @media (min-width: 821px) { .plist__desc { grid-column: 1; } }
+</style>

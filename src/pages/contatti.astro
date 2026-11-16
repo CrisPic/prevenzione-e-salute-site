@@ -1,22 +1,38 @@
 ---
 import Page from '../layouts/Page.astro';
-import { site } from '../data/site.js';
+import { site, contactChannels } from '../data/site.js';
 import Icon from '../components/Icon.astro';
 const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
+// Only channels that exist are listed; the rest stay off the page until provided
+const channels = contactChannels();
 ---
-<Page title="Contatti e orari | Prevenzione e Salute – Via Piacenza 4, Milano" description="Studio medico presso GetFIT, Via Piacenza 4, 20135 Milano, primo piano. Orari, telefono, WhatsApp, email e indicazioni per raggiungerci." heading="Contatti e orari">
-  <section>
-    <div class="container prose">
-      <p><strong>Indirizzo:</strong> GetFIT, {site.address} — primo piano</p>
-      <div class="actions"><a class="btn btn-primary" href={bookHref}>Prenota online</a><a class="btn" href={site.mapsUrl}><Icon name="pin" size={20} /> Indicazioni stradali</a></div>
-      <h2>Orari di apertura</h2>
-      <p>In arrivo.</p>
-      <h2>Telefono, WhatsApp ed email</h2>
-      <ul>
-        <li>Telefono: {site.phone || '[numero]'}</li>
-        <li>WhatsApp: {site.whatsapp || '[numero]'}</li>
-        <li>Email: {site.email || '[email]'}</li>
-      </ul>
+<Page title="Contatti e orari | Prevenzione e Salute – Via Piacenza 4, Milano" description="Studio medico presso GetFIT, Via Piacenza 4, 20135 Milano, primo piano. Orari, telefono, WhatsApp, email e indicazioni per raggiungerci." kicker="Contatti" heading="Contatti e orari">
+  <section class="sec" aria-labelledby="dove-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="dove-h">Dove</h2></div>
+      <div class="sec-body">
+        <dl class="facts">
+          <div><dt>Indirizzo</dt><dd>{site.address}</dd></div>
+          <div><dt>Studio</dt><dd>{site.venue}</dd></div>
+          <div><dt>Orari</dt><dd>{site.hours || 'In arrivo'}</dd></div>
+        </dl>
+        <a class="arrow-link" href={site.mapsUrl}><Icon name="pin" size={18} /> Indicazioni stradali su Google Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="contatti-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="contatti-h">Prenotazioni e contatti</h2></div>
+      <div class="sec-body">
+        {channels.length > 0 && (
+          <dl class="facts">
+            {channels.map((c) => <div><dt>{c.label}</dt><dd><a href={c.href}>{c.value}</a></dd></div>)}
+          </dl>
+        )}
+        <p class:list={{ 'mt-6': channels.length > 0 }}>Per fissare un appuntamento scelga giorno e orario nel calendario online.</p>
+        <div class="actions"><a class="btn btn-primary btn-lg" href={bookHref} data-primary-cta>Prenota online <Icon name="arrow" size={20} /></a></div>
+      </div>
     </div>
   </section>
 </Page>

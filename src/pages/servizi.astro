@@ -1,14 +1,10 @@
 ---
 import Page from '../layouts/Page.astro';
-import ServiceRow from '../components/ServiceRow.astro';
+import PriceList from '../components/PriceList.astro';
 import FaqItem from '../components/FaqItem.astro';
 import Icon from '../components/Icon.astro';
+import { serviceInfo } from '../data/site.js';
 const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
-const services = [
-  { i: 'certificate', t: 'Certificato medico per attività sportiva non agonistica', p: '€50', d: "Necessario per l'attività sportiva non agonistica praticata con società e associazioni sportive, anche in palestra, e per le attività sportive parascolastiche. La visita dura circa 10 minuti e comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio." },
-  { i: 'certificate', t: 'Certificato medico per attività ludico-motoria', p: '€50', d: "Per l'attività fisica amatoriale e ricreativa svolta al di fuori di società e associazioni sportive, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Non vale per l'attività sportiva organizzata né per le gare. La visita dura circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio." },
-  { i: 'stethoscope', t: 'Visite mediche specialistiche', p: 'Su richiesta', d: "Visite con medici specialisti presso lo studio. Si prenotano online scegliendo «Visita medica specialistica» nella pagina Prenota." },
-];
 const faq = [
   ['Quanto dura il certificato?', 'Il certificato non agonistico e quello ludico-motorio valgono 12 mesi dalla data di rilascio.'],
   ['Quanto dura la visita per il certificato?', "Circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità."],
@@ -23,30 +19,46 @@ const faqSchema = {
   mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 };
 ---
-<Page schema={faqSchema} title="Servizi e prezzi: certificato sportivo €50 | Prevenzione e Salute" description="Certificato medico sportivo non agonistico e certificato per attività ludico-motoria €50 e visite mediche specialistiche presso GetFIT, Via Piacenza 4, Milano." heading="Certificati sportivi e visite specialistiche" intro="Tutte le visite si svolgono nello studio medico al primo piano di GetFIT, in Via Piacenza 4.">
-  <section>
-    <div class="container stack">
-      {services.map((s, i) => (
-        <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} headingLevel={2} />
-      ))}
-      <div class="actions"><a class="btn btn-primary btn-lg" href={bookHref}>Prenota online <Icon name="arrow" size={20} /></a></div>
+<Page schema={faqSchema} title="Servizi e prezzi: certificato sportivo €50 | Prevenzione e Salute" description="Certificato medico sportivo non agonistico e certificato per attività ludico-motoria €50 e visite mediche specialistiche presso GetFIT, Via Piacenza 4, Milano." kicker="Servizi e prezzi" heading="Certificati sportivi e visite specialistiche" intro="Prezzi, durata della visita e cosa portare. Lo studio è al primo piano di GetFIT, in Via Piacenza 4.">
+  <section class="sec" aria-labelledby="elenco-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="elenco-h">Cosa può prenotare</h2><p>Prevenzione e Salute si avvale di professionisti qualificati.</p></div>
+      <div class="sec-body">
+        <PriceList items={serviceInfo} detailed>
+          {serviceInfo.map((s) => (
+            <a slot={s.id} class="arrow-link" href={`${bookHref}?servizio=${s.id}`}>
+              {s.id === 'specialistica' ? 'Prenoti una visita specialistica' : 'Prenoti questo certificato'} <Icon name="arrow" size={18} />
+            </a>
+          ))}
+        </PriceList>
+      </div>
     </div>
   </section>
-  <section class="after">
-    <div class="container prose">
-      <h2>Cosa portare alla visita</h2>
-      <ul>
-        <li>Documento d'identità e tessera sanitaria</li>
-        <li>Eventuali referti o esami recenti</li>
-        <li>Per i minori: presenza di un genitore o tutore</li>
-      </ul>
-      <h2>Domande sul certificato e sulla visita</h2>
-      {faq.map(([q, a]) => <FaqItem q={q} a={a} />)}
+
+  <section class="sec" aria-labelledby="portare-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="portare-h">Cosa portare alla visita</h2></div>
+      <div class="sec-body">
+        <ul class="rows">
+          <li>Documento d'identità e tessera sanitaria</li>
+          <li>Eventuali referti o esami recenti</li>
+          <li>Per i minori: presenza di un genitore o tutore</li>
+        </ul>
+        <div class="actions"><a class="btn btn-primary btn-lg" href={bookHref} data-primary-cta>Prenota online <Icon name="arrow" size={20} /></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="domande" aria-labelledby="faq-h">
+    <div class="container">
+      <div class="sec-head"><h2 id="faq-h">Domande sul certificato e sulla visita</h2></div>
+      <div class="sec-body">
+        {faq.map(([q, a]) => <FaqItem q={q} a={a} />)}
+      </div>
     </div>
   </section>
 </Page>
 
 <style>
-  .after { padding-top: 0; }
-  .stack .actions { margin-top: var(--space-1); }
+  .sec-body :global(.plist .arrow-link) { margin-top: var(--space-1); justify-self: start; }
 </style>

@@ -2,7 +2,7 @@
 export const site = {
   name: 'Prevenzione e Salute',
   address: 'Via Piacenza 4, 20135 Milano',
-  venue: 'c/o GetFIT – primo piano',
+  venue: 'presso GetFIT, primo piano',
   venueEn: 'inside GetFIT – first floor',
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=GetFIT+Via+Piacenza+4+Milano',
   phone: '',      // TODO
@@ -10,6 +10,7 @@ export const site = {
   email: '',      // TODO
   vat: '[P.IVA]', // TODO
   pec: '[PEC]',   // TODO
+  hours: '',      // TODO opening hours, e.g. 'Lun–Ven 9–19'; hidden on the site while empty
   certificatePrice: 50,
   showEnglish: false, // set to true once the English pages exist
   // false = every page gets <meta name="robots" content="noindex">.
@@ -35,6 +36,33 @@ export const booking = {
   // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
   mockHours: { days: [1, 2, 3, 4, 5, 6], ranges: [['09:00', '13:00'], ['15:00', '19:00']] },
 };
+
+// Contact channels that exist (empty fields are left out), shared by Footer and Contatti
+export const contactChannels = () => [
+  site.phone && { label: 'Telefono', value: site.phone, href: `tel:${site.phone}` },
+  site.whatsapp && { label: 'WhatsApp', value: `+${site.whatsapp}`, href: `https://wa.me/${site.whatsapp}` },
+  site.email && { label: 'Email', value: site.email, href: `mailto:${site.email}` },
+].filter(Boolean);
+
+// Approved service copy (doctor review DR-01..03), shared by Home and Servizi.
+// summary = one line for the Home price table; details = full text on Servizi.
+export const serviceInfo = [
+  {
+    id: 'certificato', title: 'Certificato medico per attività sportiva non agonistica', price: `€${site.certificatePrice}`, validity: '12 mesi',
+    summary: 'Per lo sport praticato con società e associazioni sportive e per le attività sportive parascolastiche.',
+    details: "Necessario per l'attività sportiva non agonistica praticata con società e associazioni sportive, anche in palestra, e per le attività sportive parascolastiche. La visita dura circa 10 minuti e comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
+  },
+  {
+    id: 'ludico', title: 'Certificato medico per attività ludico-motoria', price: `€${site.certificatePrice}`, validity: '12 mesi',
+    summary: 'Per attività fisica amatoriale e ricreativa, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede.',
+    details: "Per l'attività fisica amatoriale e ricreativa svolta al di fuori di società e associazioni sportive, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Non vale per l'attività sportiva organizzata né per le gare. La visita dura circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
+  },
+  {
+    id: 'specialistica', title: 'Visite mediche specialistiche', price: 'Su richiesta',
+    summary: 'Visite con medici specialisti presso lo studio, prenotabili online.',
+    details: 'Visite con medici specialisti presso lo studio. Si prenotano online scegliendo «Visita medica specialistica» nella pagina Prenota.',
+  },
+];
 
 // Schema.org data for the studio (JSON-LD). Empty fields are left out.
 export const clinicSchema = (siteUrl) => {

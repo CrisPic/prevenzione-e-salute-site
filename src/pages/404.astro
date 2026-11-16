@@ -2,14 +2,17 @@
 import Page from '../layouts/Page.astro';
 const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 ---
-<Page noindex title="Pagina non trovata | Prevenzione e Salute" description="La pagina cercata non esiste o è stata spostata." heading="Pagina non trovata" intro="La pagina che cerca non esiste o è stata spostata.">
-  <section>
-    <div class="container prose">
-      <div class="actions">
-        <a class="btn btn-primary" href={bookHref}>Prenota la visita</a>
-        <a class="btn" href="/">Torna alla home</a>
-        <a class="btn" href="/servizi/">Servizi e prezzi</a>
-      </div>
+<Page noindex title="Pagina non trovata | Prevenzione e Salute" description="La pagina cercata non esiste o è stata spostata." kicker="Errore 404" heading="Pagina non trovata" intro="La pagina che cerca non esiste o è stata spostata.">
+  <div class="container pad">
+    <div class="actions">
+      <a class="btn btn-primary" href={bookHref} data-primary-cta>Prenota la visita</a>
+      <a class="btn" href="/servizi/">Servizi e prezzi</a>
+      <a class="btn" href="/">Torna alla home</a>
     </div>
-  </section>
+  </div>
 </Page>
+
+<style>
+  .pad { padding-bottom: var(--space-16); }
+  .pad .actions { margin-top: 0; }
+</style>

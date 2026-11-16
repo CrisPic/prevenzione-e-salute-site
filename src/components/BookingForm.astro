@@ -14,7 +14,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 ---
 <div class="bk" data-bk data-tz={tz} data-fallback={fallback}>
   <div data-bk-fallback>
-    <InfoCallout icon="calendar"><p>Il calendario di prenotazione online non è disponibile in questo momento. {channels ? `Può prenotare ${channels}.` : 'Riprovi più tardi.'}</p></InfoCallout>
+    <InfoCallout><p>Il calendario di prenotazione online non è disponibile in questo momento. {channels ? `Può prenotare ${channels}.` : 'Riprovi più tardi.'}</p></InfoCallout>
   </div>
 
   <!-- Shown while JS loads the calendar (only when JS runs; without JS the fallback above stays) -->
@@ -354,15 +354,16 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 </script>
 
 <style>
-  .bk { margin: 0 0 var(--space-6); }
+  .bk { margin: 0; }
   /* Form holds radius-s tiles at its padding edge: radius = radius-s + padding */
-  .bk-form, .bk-boot { --pad: var(--space-6); background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--radius-s) + var(--pad)); padding: var(--space-2) var(--pad) var(--pad); }
+  .bk-form, .bk-boot { --pad: var(--space-6); background: var(--card); border: 1px solid var(--line); border-top: 2px solid var(--rule); border-radius: 0 0 var(--radius-l) var(--radius-l); padding: var(--space-2) var(--pad) var(--pad); }
   .bk-demo { margin: var(--space-4) 0 0; padding: 10px 14px; background: var(--notice-soft); border-radius: var(--radius-s); font-size: 15px; }
   .bk-step { border: 0; margin: 0; padding: var(--space-5) 0 var(--space-1); min-width: 0; }
   .bk-step + .bk-step { border-top: 1px solid var(--line); }
   .bk-step legend { display: flex; align-items: center; gap: 10px; float: left; width: 100%; margin-bottom: 14px; font-weight: 700; font-size: var(--fs-md); color: var(--brand-dark); }
   .bk-step legend + * { clear: both; }
-  .bk-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-size: var(--fs-sm); }
+  .bk-num { color: var(--brand); font-variant-numeric: tabular-nums; }
+  .bk-num::after { content: '.'; }
   .bk-muted { color: var(--muted); margin: 0; }
   .bk :global(input[type=radio]) { position: absolute; opacity: 0; width: 1px; height: 1px; }
 
@@ -430,7 +431,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
   .bk-spinner { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: bk-spin .7s linear infinite; }
   .bk-submit.is-pending .bk-spinner { display: inline-block; }
 
-  .bk-done { background: var(--brand-soft); border-radius: var(--radius-l); padding: var(--space-8) var(--space-6); animation: bk-in var(--dur) var(--ease); }
+  .bk-done { background: var(--brand-soft); border-top: 2px solid var(--rule); border-radius: 0 0 var(--radius-l) var(--radius-l); padding: var(--space-8) var(--space-6); animation: bk-in var(--dur) var(--ease); }
   .bk-done:focus { outline: none; }
   .bk-done__tag { display: flex; align-items: center; gap: 10px; margin: 0 0 var(--space-3); color: var(--brand-dark); font-weight: 700; }
   .bk-done__check { flex: 0 0 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: var(--on-dark); animation: bk-pop 360ms var(--ease) 80ms both; }

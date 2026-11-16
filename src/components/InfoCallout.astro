@@ -1,18 +1,9 @@
 ---
-// Note with an icon. Put the text in the slot. tone: 'soft' (teal-soft) or 'white'.
-import Icon from './Icon.astro';
-const { icon = 'info', tone = 'soft' } = Astro.props;
+// Short note with a sage left rule (global .note style), for block content such as the booking fallback.
 ---
-<div class:list={['callout', `callout--${tone}`]}>
-  <Icon name={icon} size={20} class="callout__icon" />
-  <div class="callout__body"><slot /></div>
-</div>
+<div class="note callout"><slot /></div>
 
 <style>
-  .callout { display: flex; gap: var(--space-3); align-items: flex-start; border-radius: var(--radius-m); padding: var(--space-4) var(--space-5); color: var(--text); }
-  .callout--soft { background: var(--brand-soft); }
-  .callout--white { background: var(--card); border: 1px solid var(--line); }
-  /* 20px icon centred on the first 25.6px line */
-  .callout :global(.callout__icon) { flex: 0 0 auto; color: var(--brand); margin-top: 3px; }
-  .callout__body :global(p) { margin: 0; }
+  .callout { margin: 0; }
+  .callout :global(p) { margin: 0; }
 </style>
