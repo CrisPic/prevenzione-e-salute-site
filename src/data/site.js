@@ -28,9 +28,11 @@ export const booking = {
   daysAhead: 21,     // how far ahead patients can book
   minNoticeHours: 2, // no slots sooner than this
   services: [
-    { id: 'certificato', label: 'Certificato medico sportivo non agonistico', short: 'Certificato sportivo', price: `€${site.certificatePrice}`, minutes: 30, eventTypeId: 7889004 },
+    { id: 'certificato', label: 'Certificato medico per attività sportiva non agonistica', short: 'Certificato non agonistico', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7889004 },
+    { id: 'ludico', label: 'Certificato medico per attività ludico-motoria', short: 'Certificato ludico-motorio', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7933000 },
     { id: 'pressione', label: 'Misurazione della pressione arteriosa', short: 'Pressione arteriosa', price: 'Su richiesta', minutes: 15, eventTypeId: 7889006 },
     { id: 'controllo', label: 'Controlli di salute di base e prescrizioni', short: 'Controllo di salute', price: 'Su richiesta', minutes: 30, eventTypeId: 7889005 },
+    { id: 'specialistica', label: 'Visita medica specialistica', short: 'Visita specialistica', price: 'Su richiesta', minutes: 10, eventTypeId: 7933007 },
   ],
   // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
   mockHours: { days: [1, 2, 3, 4, 5, 6], ranges: [['09:00', '13:00'], ['15:00', '19:00']] },
@@ -57,12 +59,10 @@ export const clinicSchema = (siteUrl) => {
     },
     hasMap: site.mapsUrl,
     priceRange: `€${site.certificatePrice}`,
-    makesOffer: {
-      '@type': 'Offer',
-      name: 'Certificato medico sportivo non agonistico',
-      price: site.certificatePrice,
-      priceCurrency: 'EUR',
-    },
+    makesOffer: [
+      { '@type': 'Offer', name: 'Certificato medico per attività sportiva non agonistica', price: site.certificatePrice, priceCurrency: 'EUR' },
+      { '@type': 'Offer', name: 'Certificato medico per attività ludico-motoria', price: site.certificatePrice, priceCurrency: 'EUR' },
+    ],
   };
   if (site.phone) data.telephone = site.phone;
   if (site.email) data.email = site.email;

@@ -5,6 +5,7 @@
 import { booking } from '../data/site.js';
 import InfoCallout from './InfoCallout.astro';
 const tz = booking.timeZone;
+const bookable = booking.services.filter((s) => s.eventTypeId); // services without a calendar event are not offered
 ---
 <div class="bk" data-bk data-tz={tz}>
   <div data-bk-fallback>
@@ -17,7 +18,7 @@ const tz = booking.timeZone;
     <fieldset class="bk-step">
       <legend><span class="bk-num">1</span> Servizio</legend>
       <div class="bk-services">
-        {booking.services.map((s, i) => (
+        {bookable.map((s, i) => (
           <label class="bk-service">
             <input type="radio" name="service" value={s.id} data-label={s.label} checked={i === 0} />
             <span class="bk-service__name">{s.label}</span>

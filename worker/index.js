@@ -22,7 +22,7 @@ const engineFor = (env) => {
   return null; // "off" or misconfigured
 };
 
-const findService = (id) => booking.services.find((s) => s.id === id);
+const findService = (id) => booking.services.find((s) => s.id === id && s.eventTypeId);
 
 export default {
   async fetch(request, env) {
