@@ -46,7 +46,7 @@ export const clinicSchema = (siteUrl) => {
     url: new URL('/', siteUrl).href,
     image: new URL('/og-image.png', siteUrl).href,
     logo: new URL('/favicon.svg', siteUrl).href,
-    description: 'Studio medico presso GetFIT a Milano: certificato medico sportivo non agonistico, misurazione della pressione arteriosa, controlli di salute di base.',
+    description: 'Studio medico presso GetFIT a Milano: certificato medico per attività sportiva non agonistica, certificato per attività ludico-motoria, misurazione della pressione arteriosa, controlli di salute di base, visite mediche specialistiche.',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Via Piacenza 4, primo piano (c/o GetFIT)',

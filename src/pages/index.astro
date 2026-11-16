@@ -17,9 +17,11 @@ const points = [
   { t: 'Prezzo chiaro', d: 'Certificato non agonistico €50, senza costi nascosti.' },
 ];
 const services = [
-  { i: 'certificate', t: 'Certificato medico sportivo non agonistico', p: '€50', d: 'Per palestre, associazioni, società sportive e attività parascolastiche. Valido 12 mesi.' },
+  { i: 'certificate', t: 'Certificato medico per attività sportiva non agonistica', p: '€50', d: 'Per lo sport praticato con società e associazioni sportive e per le attività sportive parascolastiche. Valido 12 mesi.' },
+  { i: 'file', t: 'Certificato medico per attività ludico-motoria', p: 'Su richiesta', d: 'Per attività fisica amatoriale e ricreativa, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Per informazioni e prenotazione ci contatti.' },
   { i: 'gauge', t: 'Misurazione della pressione arteriosa', p: 'Su richiesta', d: 'Controllo rapido, utile per chi si allena o vuole monitorarla nel tempo.' },
   { i: 'stethoscope', t: 'Controlli di salute di base e prescrizioni', p: 'Su richiesta', d: 'Visita generale, parametri principali ed eventuale prescrizione di esami.' },
+  { i: 'info', t: 'Visite mediche specialistiche', p: '', d: 'Visite con medici specialisti presso lo studio. Ci contatti per sapere quali visite sono disponibili.' },
 ];
 const audience = [
   'Iscritti in palestra e corsi fitness',
@@ -30,13 +32,13 @@ const audience = [
 const steps = [
   'Prenoti online, su WhatsApp o per telefono.',
   "Si presenti con documento d'identità e tessera sanitaria.",
-  'Visita di circa 20–30 minuti.',
-  'Riceve il certificato al termine della visita.',
+  'Visita di circa 10 minuti.',
+  "Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità.",
 ];
 ---
 <Base
   title="Certificato medico sportivo a Milano – €50 | Prevenzione e Salute"
-  description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Visita di 20–30 minuti, certificato subito."
+  description="Certificato medico sportivo non agonistico a €50 nello studio medico dentro GetFIT, Via Piacenza 4, Milano. Visita di circa 10 minuti, certificato al termine della visita se il medico conferma l'idoneità."
   schema={clinicSchema(Astro.site)}>
   <Header />
   <main id="main" tabindex="-1">
@@ -45,7 +47,7 @@ const steps = [
         <div>
           <p class="eyebrow">Studio medico · Milano</p>
           <h1>Certificato medico sportivo non agonistico a Milano</h1>
-          <p class="lead">La visita si svolge nello studio medico all'interno di GetFIT, in Via Piacenza 4. Durata circa 20–30 minuti, certificato rilasciato al termine della visita.</p>
+          <p class="lead">La visita si svolge nello studio medico all'interno di GetFIT, in Via Piacenza 4. Durata circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità.</p>
           <div class="actions">
             <a class="btn btn-primary" href={bookHref}>Prenota online</a>
             <a class="btn" href={wa}>Scrivici su WhatsApp</a>
@@ -55,11 +57,11 @@ const steps = [
           label="Certificato non agonistico"
           price={`€${site.certificatePrice}`}
           facts={[
-            { label: 'Durata visita', value: '20–30 min' },
+            { label: 'Durata visita', value: 'Circa 10 min' },
             { label: 'Validità', value: '12 mesi' },
-            { label: 'Certificato', value: 'Subito' },
             { label: 'Dove', value: 'GetFIT, 1° piano' },
           ]}
+          note={"Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità."}
         />
       </div>
     </section>
@@ -80,6 +82,7 @@ const steps = [
       <div class="container">
         <p class="eyebrow">Servizi</p>
         <h2>I nostri servizi</h2>
+        <p class="intro">Prevenzione e Salute si avvale di professionisti qualificati.</p>
         <div class="three">
           {services.map((s, i) => (
             <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} />
@@ -140,6 +143,7 @@ const steps = [
   .point__title { margin: 6px 0; font-size: 20px; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--brand-dark); }
   .point p { margin: 0; color: var(--muted); }
   .more { margin-top: 20px; font-weight: 650; }
+  .intro { margin: -8px 0 24px; color: var(--muted); }
   .band { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
   .checks { list-style: none; padding: 0; margin: 0 0 24px; }

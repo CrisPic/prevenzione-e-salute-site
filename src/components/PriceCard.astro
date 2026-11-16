@@ -1,6 +1,6 @@
 ---
 // Dark summary card with the price (lime) and key facts. facts: [{ label, value }].
-const { label, price, facts = [], ctaHref, ctaLabel } = Astro.props;
+const { label, price, facts = [], note, ctaHref, ctaLabel } = Astro.props;
 ---
 <div class="price-card">
   <svg class="price-card__pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h80l14-22 18 44 16-30 10 8h162" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -9,6 +9,7 @@ const { label, price, facts = [], ctaHref, ctaLabel } = Astro.props;
   <dl class="price-card__facts">
     {facts.map((f) => (<div><dt>{f.label}</dt><dd>{f.value}</dd></div>))}
   </dl>
+  {note && <p class="price-card__note">{note}</p>}
   {ctaHref && <a class="btn btn-primary price-card__cta" href={ctaHref}>{ctaLabel}</a>}
 </div>
 
@@ -21,5 +22,6 @@ const { label, price, facts = [], ctaHref, ctaLabel } = Astro.props;
   .price-card__facts div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
   .price-card__facts dt { color: #a9cfcf; }
   .price-card__facts dd { margin: 0; font-weight: 700; }
+  .price-card__note { margin: 0; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; color: #cfe3e3; }
   .price-card__cta { width: 100%; margin-top: 16px; }
 </style>

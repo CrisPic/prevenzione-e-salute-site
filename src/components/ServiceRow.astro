@@ -8,7 +8,7 @@ const H = `h${headingLevel}`;
   <H class="service__title">{title}</H>
   <div class="service__top">
     <IconTile icon={icon} />
-    <p class:list={['service__price', { 'service__price--tag': !featured }]}>{price}</p>
+    {price && <p class:list={['service__price', { 'service__price--tag': !featured }]}>{price}</p>}
   </div>
   {description && <p class="service__desc">{description}</p>}
   <slot />
