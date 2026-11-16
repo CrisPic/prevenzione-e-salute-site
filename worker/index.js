@@ -9,6 +9,7 @@
 import { booking } from '../src/data/site.js';
 import * as mock from './engines/mock.js';
 import * as calcom from './engines/calcom.js';
+import { EngineError } from './engines/calcom.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -68,8 +69,9 @@ export default {
 
       return json({ ok: false, error: 'not_found' }, 404);
     } catch (err) {
-      // Message only (our engines never put provider payloads or personal data in it)
-      console.error('booking api error', JSON.stringify({ path: url.pathname, name: err?.name, message: String(err?.message || '').slice(0, 200) }));
+      // Only our own diagnostic code + status: error messages (fetch failures, provider text) can contain personal data
+      const known = err instanceof EngineError;
+      console.error('booking api error', JSON.stringify({ path: url.pathname, code: known ? err.code : 'unexpected', status: known ? err.status : undefined }));
       return json({ ok: false, error: 'server' }, 502);
     }
   },

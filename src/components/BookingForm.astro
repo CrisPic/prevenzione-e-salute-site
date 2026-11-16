@@ -109,13 +109,15 @@ const tz = booking.timeZone;
     let chosenSlot: Slot | null = null;
     let slotsReq = 0;        // only the latest slots request may render
     let pending = false;     // a booking request is in flight
+    let submitId = 0;        // only the latest submit may change the lock or the page
 
     // Screen-reader announcement (visually hidden live region)
     const announce = (msg: string) => { status.textContent = ''; requestAnimationFrame(() => { status.textContent = msg; }); };
 
     const service = () => form.querySelector<HTMLInputElement>('input[name=service]:checked')!;
 
-    async function loadSlots() {
+    // Returns true only if this call's result was rendered (not superseded)
+    async function loadSlots(): Promise<boolean> {
       const req = ++slotsReq;
       chosenDate = '';
       chosenSlot = null;
@@ -126,7 +128,7 @@ const tz = booking.timeZone;
       try {
         const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`);
         const data = await res.json();
-        if (req !== slotsReq) return; // the patient picked another service meanwhile
+        if (req !== slotsReq) return false; // the patient picked another service meanwhile
         if (!data.ok) throw new Error(data.error);
         root.querySelector('[data-bk-fallback]')!.setAttribute('hidden', '');
         form.hidden = false;
@@ -134,12 +136,14 @@ const tz = booking.timeZone;
         root.dataset.demo = data.demo ? '1' : '';
         days = data.days;
         renderDays();
+        return true;
       } catch {
-        if (req !== slotsReq) return;
-        if (form.hidden) return; // keep the fallback callout
+        if (req !== slotsReq) return false;
+        if (form.hidden) return false; // keep the fallback callout
         const msg = 'Non riusciamo a caricare gli orari. Ricarichi la pagina o ci contatti su WhatsApp.';
         daysBox.innerHTML = `<p class="bk-muted">${msg}</p>`;
         announce(msg);
+        return true;
       }
     }
 
@@ -242,6 +246,8 @@ const tz = booking.timeZone;
       if (pending) return;
       alert('');
       if (!validate()) return;
+      const id = ++submitId;
+      const current = () => id === submitId;
       const f = form.elements as any;
       // Freeze what is being booked: the confirmation must show exactly this,
       // whatever happens to the form while the request is in flight.
@@ -259,14 +265,16 @@ const tz = booking.timeZone;
           }),
         });
         const data = await res.json().catch(() => ({ ok: false }));
+        if (!current()) return;
         if (data.ok) { booked = true; return done(sent, !!data.demo); }
         setPending(false);
         if (data.error === 'slot_taken' || data.error === 'slot_unavailable') {
           alert(data.error === 'slot_taken'
             ? 'Questo orario è appena stato prenotato da un\'altra persona. Ne scelga un altro tra quelli aggiornati.'
             : 'L\'orario scelto non è più disponibile. Ne scelga un altro tra quelli aggiornati.');
-          await loadSlots();
-          daysBox.scrollIntoView({ block: 'center' });
+          const rendered = await loadSlots();
+          // Scroll only if nothing newer (another service, another submit) took over meanwhile
+          if (rendered && current() && !pending) daysBox.scrollIntoView({ block: 'center' });
         } else if (data.error === 'rate_limited') {
           alert('Troppi tentativi in poco tempo. Attenda un minuto e riprovi.');
         } else if (data.field && ['name', 'phone', 'email', 'privacy'].includes(data.field)) {
@@ -277,9 +285,10 @@ const tz = booking.timeZone;
           alert('Non siamo riusciti a completare la prenotazione. Riprovi tra poco o ci scriva su WhatsApp.');
         }
       } catch {
-        if (!booked) alert('Connessione non riuscita. Controlli la rete e riprovi.');
+        if (!booked && current()) alert('Connessione non riuscita. Controlli la rete e riprovi.');
       } finally {
-        if (!booked) setPending(false);
+        // An older submit must never unlock a newer pending one
+        if (!booked && current()) setPending(false);
       }
     });
 
