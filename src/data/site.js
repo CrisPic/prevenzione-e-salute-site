@@ -30,8 +30,6 @@ export const booking = {
   services: [
     { id: 'certificato', label: 'Certificato medico per attività sportiva non agonistica', short: 'Certificato non agonistico', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7889004 },
     { id: 'ludico', label: 'Certificato medico per attività ludico-motoria', short: 'Certificato ludico-motorio', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7933000 },
-    { id: 'pressione', label: 'Misurazione della pressione arteriosa', short: 'Pressione arteriosa', price: 'Su richiesta', minutes: 15, eventTypeId: 7889006 },
-    { id: 'controllo', label: 'Controlli di salute di base e prescrizioni', short: 'Controllo di salute', price: 'Su richiesta', minutes: 30, eventTypeId: 7889005 },
     { id: 'specialistica', label: 'Visita medica specialistica', short: 'Visita specialistica', price: 'Su richiesta', minutes: 10, eventTypeId: 7933007 },
   ],
   // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
@@ -48,7 +46,7 @@ export const clinicSchema = (siteUrl) => {
     url: new URL('/', siteUrl).href,
     image: new URL('/og-image.png', siteUrl).href,
     logo: new URL('/favicon.svg', siteUrl).href,
-    description: 'Studio medico presso GetFIT a Milano: certificato medico per attività sportiva non agonistica, certificato per attività ludico-motoria, misurazione della pressione arteriosa, controlli di salute di base, visite mediche specialistiche.',
+    description: 'Studio medico presso GetFIT a Milano: certificato medico per attività sportiva non agonistica, certificato per attività ludico-motoria, visite mediche specialistiche.',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Via Piacenza 4, primo piano (c/o GetFIT)',
