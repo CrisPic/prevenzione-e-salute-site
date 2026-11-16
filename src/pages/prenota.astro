@@ -5,17 +5,21 @@ import InfoCallout from '../components/InfoCallout.astro';
 import BookingForm from '../components/BookingForm.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico (€50) presso GetFIT, Via Piacenza 4, Milano. Oppure ci scriva su WhatsApp o ci chiami." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50), la misurazione della pressione, un controllo di salute o una visita specialistica presso GetFIT, Via Piacenza 4, Milano." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
   <section>
     <div class="container prose">
       <BookingForm />
-      <h2>Preferisce scriverci o chiamare?</h2>
-      <div class="actions">
-        <a class="btn btn-dark" href={wa || '/contatti/'}>Scrivici su WhatsApp</a>
-        <a class="btn" href={site.phone ? `tel:${site.phone}` : '/contatti/'}>Chiama{site.phone ? `: ${site.phone}` : ''}</a>
-      </div>
+      {(wa || site.phone) && (
+        <>
+          <h2>Preferisce scriverci o chiamare?</h2>
+          <div class="actions">
+            {wa && <a class="btn btn-dark" href={wa}>Ci scriva su WhatsApp</a>}
+            {site.phone && <a class="btn" href={`tel:${site.phone}`}>Ci chiami: {site.phone}</a>}
+          </div>
+        </>
+      )}
       <h2>Disdire o spostare un appuntamento</h2>
-      <p>Usi il link nell'email di conferma oppure ci scriva su WhatsApp, possibilmente almeno 24 ore prima.</p>
+      <p>Usi il link nell'email di conferma{wa ? ' oppure ci scriva su WhatsApp' : ''}, possibilmente almeno 24 ore prima.</p>
       <InfoCallout icon="shield" tone="white"><p>Nel modulo chiediamo solo nome, telefono, email e servizio. Non inserisca informazioni sulla sua salute.</p></InfoCallout>
     </div>
   </section>
