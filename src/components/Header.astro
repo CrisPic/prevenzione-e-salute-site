@@ -50,7 +50,7 @@ const current = (href) => (path === href ? 'page' : undefined);
 </script>
 
 <style>
-  .header { position: sticky; top: 0; z-index: 20; background: rgba(246,249,249,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .header { position: sticky; top: 0; z-index: 20; background: var(--header-bg); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
   .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; }
   .logo { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: var(--fw-bold); color: var(--brand-dark); text-decoration: none; font-size: 17px; }
   .nav { display: flex; align-items: center; gap: var(--space-6); }

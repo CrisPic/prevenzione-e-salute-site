@@ -21,7 +21,7 @@ const schemas = schema ? [schema].flat() : [];
     <meta name="description" content={description} />
     {robots && <meta name="robots" content={robots} />}
     {!noindex && <link rel="canonical" href={canonical} />}
-    <meta name="theme-color" content="#0f5c63" />
+    <meta name="theme-color" content="#22392f" />
     {site.showEnglish && <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />}
     {site.showEnglish && <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />}
     {site.showEnglish && <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />}
@@ -52,21 +52,23 @@ const schemas = schema ? [schema].flat() : [];
 <style is:global>
   /* ===== Design system: every component reads these tokens, no raw values elsewhere ===== */
   :root {
-    /* Colour (Palette A). Lime = action buttons and the price only. */
-    --brand: #0f5c63;
-    --brand-dark: #0a3f44;
-    --brand-soft: #e3f0f0;
-    --accent: #c6f432;
-    --accent-dark: #a8d61a;
-    --text: #1b2426;
-    --muted: #5b6b6e;
-    --line: #dde7e7;
-    --line-strong: #9fc6c6;
-    --bg: #f6f9f9;
+    /* Colour (Palette C, sage + apricot). Apricot = action buttons and the price only. */
+    --brand: #3f6b57;
+    --brand-dark: #22392f;
+    --brand-soft: #e9f0ea;
+    --accent: #f4a64a;
+    --accent-dark: #e8912a;
+    --text: #1f2622;
+    --muted: #5e665f;
+    --line: #e6e2d8;
+    --line-strong: #b5c9bb;
+    --bg: #faf8f4;
+    --header-bg: rgba(250, 248, 244, .92);
+    --skeleton-hi: #f4f7f3;
     --card: #ffffff;
     --on-dark: #ffffff;
-    --on-dark-muted: #a9cfcf;
-    --on-dark-soft: #cfe3e3;
+    --on-dark-muted: #a9c3b4;
+    --on-dark-soft: #d6e3da;
     --danger: #b3261e;
     --danger-soft: #fdecea;
     --danger-text: #8c1d18;
@@ -92,7 +94,7 @@ const schemas = schema ? [schema].flat() : [];
     --radius: var(--radius-m);
     --tile-s: 40px;
     --tile-m: 48px;
-    --shadow-float: 0 8px 24px rgba(10, 63, 68, .3);
+    --shadow-float: 0 8px 24px rgba(34, 57, 47, .3);
 
     /* Motion: short, only to confirm what happened */
     --dur-fast: 120ms;
@@ -124,7 +126,7 @@ const schemas = schema ? [schema].flat() : [];
   .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 var(--space-4); }
   .nowrap { white-space: nowrap; }
 
-  /* Buttons: one primary (lime) per view, everything else outlined */
+  /* Buttons: one primary (apricot) per view, everything else outlined */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 48px; padding: 0 var(--space-6); border-radius: var(--radius-pill); font: inherit; font-weight: var(--fw-semibold); line-height: 1.2; text-decoration: none; cursor: pointer; border: 2px solid var(--brand); color: var(--brand); background: transparent; transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
   .btn:hover { background: var(--brand-soft); }
   .btn:active { transform: scale(.97); }
