@@ -10,6 +10,8 @@ AGENTS.md
 CLAUDE.md
 TASKS.md
 HANDOFF.md
+.claude/
+.agent-comms/
 
 # Local Worker secrets
 .dev.vars
