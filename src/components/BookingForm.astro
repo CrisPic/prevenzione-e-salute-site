@@ -4,11 +4,15 @@
 // the fallback callout (WhatsApp / phone) stays visible and the form stays hidden.
 import { booking } from '../data/site.js';
 import InfoCallout from './InfoCallout.astro';
+import { site } from '../data/site.js';
 const tz = booking.timeZone;
+// Name only the channels that really exist (none yet = point to the Contatti page)
+const channels = [site.whatsapp && 'su WhatsApp', site.phone && 'per telefono'].filter(Boolean).join(' o ');
+const fallback = channels ? `ci contatti ${channels}` : 'trovi i recapiti nella pagina Contatti';
 ---
-<div class="bk" data-bk data-tz={tz}>
+<div class="bk" data-bk data-tz={tz} data-fallback={fallback}>
   <div data-bk-fallback>
-    <InfoCallout icon="calendar"><p>Il calendario di prenotazione online non è disponibile in questo momento. Può prenotare su WhatsApp o per telefono.</p></InfoCallout>
+    <InfoCallout icon="calendar"><p>Il calendario di prenotazione online non è disponibile in questo momento. {channels ? `Può prenotare ${channels}.` : <>I recapiti dello studio sono nella pagina <a href="/contatti/">Contatti</a>.</>}</p></InfoCallout>
   </div>
 
   <form class="bk-form" data-bk-form novalidate hidden>
@@ -90,6 +94,7 @@ const tz = booking.timeZone;
 
   function init(root: HTMLElement) {
     const tz = root.dataset.tz!;
+    const fallback = root.dataset.fallback!;
     const $ = <T extends Element = HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
     const form = $<HTMLFormElement>('[data-bk-form]');
     const daysBox = $('[data-bk-days]');
@@ -140,7 +145,7 @@ const tz = booking.timeZone;
       } catch {
         if (req !== slotsReq) return false;
         if (form.hidden) return false; // keep the fallback callout
-        const msg = 'Non riusciamo a caricare gli orari. Ricarichi la pagina o ci contatti su WhatsApp.';
+        const msg = `Non riusciamo a caricare gli orari. Ricarichi la pagina o ${fallback}.`;
         daysBox.innerHTML = `<p class="bk-muted">${msg}</p>`;
         announce(msg);
         return true;
@@ -150,7 +155,7 @@ const tz = booking.timeZone;
     function renderDays() {
       const open = days.filter((d) => d.slots.length);
       if (!open.length) {
-        const msg = 'Nessun orario libero nei prossimi giorni. Ci contatti su WhatsApp o per telefono.';
+        const msg = `Nessun orario libero nei prossimi giorni. Per un appuntamento ${fallback}.`;
         daysBox.innerHTML = `<p class="bk-muted">${msg}</p>`;
         announce(msg);
         return;
@@ -282,7 +287,7 @@ const tz = booking.timeZone;
           alert(err?.textContent || 'Controlli i dati inseriti.');
           input?.focus();
         } else {
-          alert('Non siamo riusciti a completare la prenotazione. Riprovi tra poco o ci scriva su WhatsApp.');
+          alert(`Non siamo riusciti a completare la prenotazione. Riprovi tra poco o ${fallback}.`);
         }
       } catch {
         if (!booked && current()) alert('Connessione non riuscita. Controlli la rete e riprovi.');
