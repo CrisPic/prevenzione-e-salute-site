@@ -148,10 +148,14 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       timesBox.innerHTML = '<p class="bk-muted">Scelga prima un giorno.</p>';
       updateSummary();
       if (!form.hidden) announce('Caricamento degli orari disponibili.');
+      // Bounded loading state: abort after 8 s (request + parsing) and show the error / fallback.
+      // AbortController + timer instead of AbortSignal.timeout(), which older browsers lack.
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
       try {
-        // Bounded loading state: give up after 8 s and show the error / fallback
-        const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`, { signal: AbortSignal.timeout(8000) });
+        const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`, { signal: ctrl.signal });
         const data = await res.json();
+        clearTimeout(timer);
         if (req !== slotsReq) return false; // the patient picked another service meanwhile
         if (!data.ok) throw new Error(data.error);
         root.querySelector('[data-bk-fallback]')!.setAttribute('hidden', '');
@@ -164,6 +168,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
         renderDays();
         return true;
       } catch {
+        clearTimeout(timer);
         if (req !== slotsReq) return false;
         daysBox.removeAttribute('aria-busy');
         if (form.hidden) { root.dataset.state = 'fallback'; return false; } // show the fallback callout (also after the 10 s safety net)

@@ -4,13 +4,14 @@ const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is show
 // WhatsApp / Chiama appear only once the real number is in site.js
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 const tel = site.phone ? `tel:${site.phone}` : '';
-// On the booking page the form is the action: no second "Prenota" competing with it
+// On the booking page the form is the action: no second "Prenota" competing with it.
+// Only a lone Prenota floats without the dark tray; WhatsApp/Chiama always keep the tray (white text).
 const onBooking = Astro.url.pathname.startsWith('/prenota');
 const items = [!onBooking && 'book', wa && 'wa', tel && 'tel'].filter(Boolean);
 const cols = items.length === 3 ? '1.4fr 1fr 1fr' : items.length === 2 && !onBooking ? '1.4fr 1fr' : `repeat(${items.length}, 1fr)`;
 ---
 {items.length > 0 ? (
-  <nav class:list={['mbar', { 'mbar--solo': items.length === 1 }]} aria-label="Azioni rapide" style={`--mbar-cols:${cols}`}>
+  <nav class:list={['mbar', { 'mbar--solo': items.length === 1 && items[0] === 'book' }]} aria-label="Azioni rapide" style={`--mbar-cols:${cols}`}>
     {!onBooking && <a href={bookHref} class="main">Prenota</a>}
     {wa && <a href={wa}>WhatsApp</a>}
     {tel && <a href={tel}>Chiama</a>}
