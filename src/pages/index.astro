@@ -68,7 +68,7 @@ const steps = [
         <div class="services-grid">
           {services.map((s, i) => (
             <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0}>
-              {i === 0 && <a class="btn btn-primary btn-lg feature-cta" href={bookHref}>Prenota il certificato <Icon name="arrow" size={20} /></a>}
+              {i === 0 && <a class="btn btn-primary btn-lg feature-cta" href={`${bookHref}?servizio=certificato`}>Prenota il certificato <Icon name="arrow" size={20} /></a>}
             </ServiceRow>
           ))}
         </div>

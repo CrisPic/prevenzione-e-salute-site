@@ -29,6 +29,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       <div class="bk-boot__days">{Array.from({ length: 7 }, () => <span class="bk-skel bk-skel--day"></span>)}</div>
     </div>
   </div>
+  <!-- Safety net: if the booking script never loads or the calendar never answers, show the fallback after 10 s -->
+  <script is:inline>setTimeout(function () { var r = document.querySelector('[data-bk]'); if (r && !r.dataset.state) r.dataset.state = 'fallback'; }, 10000);</script>
 
   <form class="bk-form" data-bk-form novalidate hidden>
     <p class="bk-sr" data-bk-status role="status" aria-live="polite"></p>
@@ -147,7 +149,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       updateSummary();
       if (!form.hidden) announce('Caricamento degli orari disponibili.');
       try {
-        const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`);
+        // Bounded loading state: give up after 8 s and show the error / fallback
+        const res = await fetch(`/api/booking/slots?service=${encodeURIComponent(service().value)}`, { signal: AbortSignal.timeout(8000) });
         const data = await res.json();
         if (req !== slotsReq) return false; // the patient picked another service meanwhile
         if (!data.ok) throw new Error(data.error);
@@ -163,7 +166,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       } catch {
         if (req !== slotsReq) return false;
         daysBox.removeAttribute('aria-busy');
-        if (form.hidden) { root.dataset.state = 'fallback'; return false; } // show the fallback callout
+        if (form.hidden) { root.dataset.state = 'fallback'; return false; } // show the fallback callout (also after the 10 s safety net)
         const msg = `Non riusciamo a caricare gli orari. Ricarichi la pagina tra qualche minuto.${fallback}`;
         daysBox.innerHTML = `<p class="bk-muted">${msg}</p>`;
         announce(msg);
@@ -336,6 +339,11 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       box.scrollIntoView({ block: 'start' });
     }
 
+    // Links like /prenota/?servizio=certificato preselect that service; the patient can still switch
+    const wanted = new URLSearchParams(location.search).get('servizio');
+    const pre = wanted && form.querySelector<HTMLInputElement>(`input[name=service][value="${CSS.escape(wanted)}"]`);
+    if (pre) pre.checked = true;
+
     loadSlots();
   }
 </script>
@@ -366,7 +374,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
   @keyframes bk-shimmer { to { background-position: -200% 0; } }
 
   /* Selectable tiles (service, day, time) share one look */
-  .bk-service, .bk :global(.bk-day), .bk :global(.bk-time) { position: relative; cursor: pointer; border: 2px solid var(--line); border-radius: var(--radius-s); background: var(--card); transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
+  .bk-service, .bk :global(.bk-day), .bk :global(.bk-time) { position: relative; cursor: pointer; border: 2px solid var(--line-control); border-radius: var(--radius-s); background: var(--card); transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
   .bk-service:hover, .bk :global(.bk-day:hover), .bk :global(.bk-time:hover) { border-color: var(--brand); }
   .bk-service:active, .bk :global(.bk-day:active), .bk :global(.bk-time:active) { transform: scale(.97); }
   .bk-service:has(input:checked), .bk :global(.bk-day:has(input:checked)), .bk :global(.bk-time:has(input:checked)) { border-color: var(--brand); background: var(--brand-soft); }
@@ -382,7 +390,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
   .bk :global(.bk-day) { display: flex; flex-direction: column; align-items: center; padding: var(--space-2) var(--space-1); min-height: 76px; line-height: 1.2; animation: bk-in var(--dur) var(--ease) backwards; }
   .bk :global(.bk-day__wd), .bk :global(.bk-day__mon) { font-size: var(--fs-xs); color: var(--muted); text-transform: capitalize; }
   .bk :global(.bk-day__num) { font-size: 20px; font-weight: 700; color: var(--brand-dark); margin: 2px 0; }
-  .bk :global(.bk-day:has(input:disabled)) { cursor: default; opacity: .4; background: transparent; border-style: dashed; }
+  .bk :global(.bk-day:has(input:disabled)) { cursor: default; opacity: .4; background: transparent; border-color: var(--line); border-style: dashed; }
   .bk :global(.bk-day:has(input:disabled):hover) { border-color: var(--line); }
   .bk :global(.bk-day:has(input:disabled):active) { transform: none; }
 
@@ -395,7 +403,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
   .bk-fields { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
   .bk-field { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
   .bk-field:first-child { grid-column: 1 / -1; }
-  .bk-field input { font: inherit; font-weight: 400; min-height: 48px; padding: 10px 14px; border: 2px solid var(--line); border-radius: var(--radius-s); background: var(--card); color: var(--text); transition: border-color var(--dur-fast) var(--ease); }
+  .bk-field input { font: inherit; font-weight: 400; min-height: 48px; padding: 10px 14px; border: 2px solid var(--line-control); border-radius: var(--radius-s); background: var(--card); color: var(--text); transition: border-color var(--dur-fast) var(--ease); }
   .bk-field input:focus { border-color: var(--brand); }
   .bk-field input[aria-invalid=true] { border-color: var(--danger); }
   .bk-check { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; min-height: 44px; }
