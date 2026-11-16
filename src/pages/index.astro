@@ -6,20 +6,16 @@ import MobileBar from '../components/MobileBar.astro';
 import PriceCard from '../components/PriceCard.astro';
 import ServiceRow from '../components/ServiceRow.astro';
 import StepTimeline from '../components/StepTimeline.astro';
+import Icon from '../components/Icon.astro';
 import { site, clinicSchema } from '../data/site.js';
 
 const bookHref = '/prenota/'; // always via Prenota, so the privacy gate is shown first
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : ''; // shown only when the number exists
 
-const points = [
-  { t: 'Dove si allena', d: 'Lo studio è al primo piano di GetFIT, in Via Piacenza 4.' },
-  { t: 'Prenotazione in un minuto', d: 'Scelga giorno e orario dal calendario online.' },
-  { t: 'Prezzo chiaro', d: 'Certificato non agonistico o ludico-motorio €50, senza costi nascosti.' },
-];
 const services = [
   { i: 'certificate', t: 'Certificato medico per attività sportiva non agonistica', p: '€50', d: 'Per lo sport praticato con società e associazioni sportive e per le attività sportive parascolastiche. Valido 12 mesi.' },
-  { i: 'file', t: 'Certificato medico per attività ludico-motoria', p: '€50', d: 'Per attività fisica amatoriale e ricreativa, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Valido 12 mesi.' },
-  { i: 'info', t: 'Visite mediche specialistiche', p: 'Su richiesta', d: 'Visite con medici specialisti presso lo studio, prenotabili online.' },
+  { i: 'certificate', t: 'Certificato medico per attività ludico-motoria', p: '€50', d: 'Per attività fisica amatoriale e ricreativa, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Valido 12 mesi.' },
+  { i: 'stethoscope', t: 'Visite mediche specialistiche', p: 'Su richiesta', d: 'Visite con medici specialisti presso lo studio, prenotabili online.' },
 ];
 const audience = [
   'Iscritti in palestra e corsi fitness',
@@ -43,66 +39,54 @@ const steps = [
     <section class="hero">
       <div class="container hero-grid">
         <div>
-          <p class="eyebrow">Studio medico · Milano</p>
           <h1>Certificato medico sportivo non agonistico a Milano</h1>
-          <p class="lead">La visita si svolge nello studio medico all'interno di GetFIT, in Via Piacenza 4. Durata circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità.</p>
+          <p class="lead">Nello studio medico al primo piano di GetFIT, in <span class="nowrap">Via Piacenza 4</span>.</p>
           <div class="actions">
-            <a class="btn btn-primary" href={bookHref}>Prenota online</a>
-            {wa && <a class="btn" href={wa}>Ci scriva su WhatsApp</a>}
+            <a class="btn btn-primary btn-lg" href={bookHref}>Prenota online <Icon name="arrow" size={20} /></a>
+            {wa && <a class="btn btn-lg" href={wa}>Ci scriva su WhatsApp</a>}
           </div>
+          <p class="cta-hint">Scelga giorno e orario dal calendario online.</p>
         </div>
         <PriceCard
-          label="Certificato non agonistico"
+          label="Certificato non agonistico o ludico-motorio"
           price={`€${site.certificatePrice}`}
           facts={[
             { label: 'Durata visita', value: 'Circa 10 min' },
             { label: 'Validità', value: '12 mesi' },
-            { label: 'Dove', value: 'GetFIT, 1° piano' },
           ]}
           note={"Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità."}
         />
       </div>
     </section>
 
-    <section class="points" aria-label="In breve">
-      <div class="container three">
-        {points.map((p, i) => (
-          <div class="point">
-            <span class="num">0{i + 1}</span>
-            <p class="point__title">{p.t}</p>
-            <p>{p.d}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section id="servizi">
+    <section id="servizi" class="services">
       <div class="container">
-        <p class="eyebrow">Servizi</p>
-        <h2>I nostri servizi</h2>
-        <p class="intro">Prevenzione e Salute si avvale di professionisti qualificati.</p>
-        <div class="three">
+        <div class="section-head">
+          <h2>Certificati sportivi e visite specialistiche</h2>
+          <p>Prevenzione e Salute si avvale di professionisti qualificati.</p>
+        </div>
+        <div class="services-grid">
           {services.map((s, i) => (
-            <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0} />
+            <ServiceRow icon={s.i} title={s.t} price={s.p} description={s.d} featured={i === 0}>
+              {i === 0 && <a class="btn btn-primary btn-lg feature-cta" href={bookHref}>Prenota il certificato <Icon name="arrow" size={20} /></a>}
+            </ServiceRow>
           ))}
         </div>
-        <p class="more"><a href="/servizi/">Scopri i servizi →</a></p>
+        <a class="text-link more" href="/servizi/">Dettagli e domande frequenti <Icon name="arrow" size={20} /></a>
       </div>
     </section>
 
     <section class="band">
       <div class="container two">
         <div>
-          <p class="eyebrow">Per chi è</p>
           <h2>Per chi fa sport, a ogni età</h2>
           <ul class="checks">
-            {audience.map((a) => <li>{a}</li>)}
+            {audience.map((a) => <li><span class="check"><Icon name="check" size={14} /></span>{a}</li>)}
           </ul>
-          <a class="btn btn-dark" href="/partner/">Per palestre e aziende</a>
+          <a class="btn" href="/partner/">Visite per gruppi: palestre e aziende</a>
         </div>
         <div>
-          <p class="eyebrow">Come funziona</p>
-          <h2>Quattro passaggi</h2>
+          <h2>Dalla prenotazione al certificato</h2>
           <StepTimeline steps={steps} />
         </div>
       </div>
@@ -111,13 +95,11 @@ const steps = [
     <section id="dove">
       <div class="container where">
         <div>
-          <p class="eyebrow">Dove siamo</p>
-          <h2>GetFIT, Via Piacenza 4</h2>
-          <p>{site.venue}<br />{site.address}</p>
-          <p><strong>Orari:</strong> in arrivo</p>
+          <h2>Al primo piano di GetFIT, in <span class="nowrap">Via Piacenza 4</span></h2>
+          <p class="address">{site.address}<br /><strong>Orari:</strong> in arrivo</p>
           <div class="actions">
-            <a class="btn btn-dark" href={site.mapsUrl}>Indicazioni stradali</a>
-            <a class="btn" href={bookHref}>Prenota online</a>
+            <a class="btn btn-primary" href={bookHref}>Prenota online</a>
+            <a class="btn" href={site.mapsUrl}><Icon name="pin" size={20} /> Indicazioni stradali</a>
           </div>
         </div>
         <div class="photo" role="img" aria-label="Foto esterna di GetFIT (in arrivo)"><span>Foto esterna GetFIT</span></div>
@@ -129,31 +111,44 @@ const steps = [
 </Base>
 
 <style>
-  .hero { padding: 56px 0 72px; background: radial-gradient(1200px 400px at 85% 0%, var(--brand-soft), transparent); }
-  .hero-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; }
-  h1 { font-size: clamp(34px, 5.4vw, 56px); margin: 0 0 18px; }
-  .lead { font-size: 19px; color: var(--muted); max-width: 560px; }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-  .points { padding: 0 0 24px; }
-  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .point { padding: 8px 0; }
-  .num { font-weight: 800; color: var(--brand); font-size: 14px; }
-  .point__title { margin: 6px 0; font-size: 20px; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--brand-dark); }
-  .point p { margin: 0; color: var(--muted); }
-  .more { margin-top: 20px; font-weight: 650; }
-  .intro { margin: -8px 0 24px; color: var(--muted); }
+  .hero { padding: var(--space-16) 0 var(--space-12); }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-12); align-items: center; }
+  /* Big heading: tiny left pull so the H's stem lines up with the text below by eye */
+  h1 { font-size: var(--fs-h1); margin: 0 0 var(--space-4) -0.03em; }
+  .lead { font-size: var(--fs-lead); color: var(--muted); max-width: 520px; margin: 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+  .cta-hint { margin: var(--space-3) 0 0; font-size: var(--fs-sm); color: var(--muted); }
+
+  .services { padding-top: var(--space-12); }
+  /* The certificate is the main feature: it takes the tall left column */
+  .services-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: var(--space-5); }
+  .services-grid > :global(.service--featured) { grid-row: span 2; }
+  .more { margin-top: var(--space-4); }
+  .feature-cta { align-self: flex-start; margin-top: var(--space-3); }
+
   .band { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
-  .checks { list-style: none; padding: 0; margin: 0 0 24px; }
-  .checks li { padding: 10px 0 10px 34px; position: relative; border-bottom: 1px solid var(--line); }
-  .checks li::before { content: ''; position: absolute; left: 0; top: 13px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%230a3f44' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
-  .where { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-  .photo { aspect-ratio: 4 / 3; border-radius: var(--radius-l); background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); display: grid; place-items: center; color: #a9cfcf; font-weight: 600; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--space-16); }
+  /* Both columns share row lines, so the list and the steps start at the same height even if a heading wraps */
+  .two > div { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; }
+  .two > div > :global(.btn) { justify-self: start; }
+  .checks { list-style: none; padding: 0; margin: 0 0 var(--space-6); }
+  .checks li { display: flex; align-items: center; gap: var(--space-3); min-height: 48px; padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+  .check { flex: 0 0 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+
+  .where { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); align-items: center; }
+  .where h2 { margin-bottom: var(--space-3); }
+  .address { margin: 0; }
+  .photo { aspect-ratio: 4 / 3; border-radius: var(--radius-l); background: var(--brand-soft); display: grid; place-items: center; color: var(--muted); font-weight: 600; }
+
   @media (max-width: 820px) {
-    section { padding: 48px 0; }
-    .hero { padding: 32px 0 48px; }
-    .hero-grid, .two, .where { grid-template-columns: 1fr; gap: 32px; }
-    .three { grid-template-columns: 1fr; }
+    .hero { padding: var(--space-8) 0 var(--space-10); }
+    .hero-grid, .two, .where { grid-template-columns: 1fr; gap: var(--space-8); }
+    .services-grid { grid-template-columns: 1fr; }
+    .services-grid > :global(.service--featured) { grid-row: auto; }
+    .two > div { grid-row: auto; grid-template-rows: none; }
+    .two { row-gap: var(--space-12); }
+    .feature-cta { align-self: stretch; }
     .actions .btn { flex: 1 1 auto; }
+    .cta-hint { text-align: center; }
   }
 </style>

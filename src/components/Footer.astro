@@ -20,11 +20,11 @@ import { site } from '../data/site.js';
 </footer>
 
 <style>
-  .footer { --focus: var(--accent); background: var(--brand-dark); color: #cfe3e3; padding: 40px 0 calc(40px + var(--mbar-space)); font-size: 14px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-  .name { color: #fff; font-weight: 700; }
-  p { margin: 0 0 8px; }
+  .footer { --focus: var(--accent); background: var(--brand-dark); color: var(--on-dark-soft); padding: var(--space-10) 0 calc(var(--space-10) + var(--mbar-space)); font-size: var(--fs-sm); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-6); }
+  .name { color: var(--on-dark); font-weight: 700; }
+  p { margin: 0 0 var(--space-2); }
   .links { display: flex; flex-direction: column; }
   .links a { min-height: 44px; display: inline-flex; align-items: center; }
-  a { color: #fff; }
+  a { color: var(--on-dark); }
 </style>

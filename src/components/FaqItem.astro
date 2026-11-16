@@ -12,13 +12,15 @@ const { q, a, open = false } = Astro.props;
 
 <style>
   .faq { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); }
-  .faq + .faq { margin-top: 10px; }
-  .faq__q { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 56px; padding: 14px 20px; cursor: pointer; font-weight: 650; color: var(--brand-dark); border-radius: var(--radius-m); }
+  .faq + .faq { margin-top: var(--space-2); }
+  .faq__q { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); min-height: 56px; padding: var(--space-3) var(--space-5); cursor: pointer; font-weight: var(--fw-semibold); color: var(--brand-dark); border-radius: var(--radius-m); }
   .faq__q::-webkit-details-marker { display: none; }
   .faq__icon { flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--brand-soft); position: relative; }
-  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2.5px; border-radius: 2px; background: var(--brand); transform: translate(-50%, -50%); }
-  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform .15s; }
+  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; border-radius: 2px; background: var(--brand); transform: translate(-50%, -50%); }
+  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform var(--dur) var(--ease); }
   .faq[open] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
-  .faq__a { padding: 0 20px 18px; color: var(--muted); }
+  .faq__a { padding: 0 var(--space-5) var(--space-5); color: var(--muted); }
+  .faq[open] .faq__a { animation: faq-in var(--dur) var(--ease); }
+  @keyframes faq-in { from { opacity: 0; transform: translateY(-4px); } }
   .faq__a :global(p) { margin: 0; }
 </style>

@@ -4,6 +4,7 @@
 // the fallback callout (WhatsApp / phone) stays visible and the form stays hidden.
 import { booking } from '../data/site.js';
 import InfoCallout from './InfoCallout.astro';
+import Icon from './Icon.astro';
 import { site } from '../data/site.js';
 const tz = booking.timeZone;
 const bookable = booking.services.filter((s) => s.eventTypeId); // services without a calendar event are not offered
@@ -14,6 +15,19 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 <div class="bk" data-bk data-tz={tz} data-fallback={fallback}>
   <div data-bk-fallback>
     <InfoCallout icon="calendar"><p>Il calendario di prenotazione online non è disponibile in questo momento. {channels ? `Può prenotare ${channels}.` : 'Riprovi più tardi.'}</p></InfoCallout>
+  </div>
+
+  <!-- Shown while JS loads the calendar (only when JS runs; without JS the fallback above stays) -->
+  <div class="bk-boot" role="status">
+    <span class="bk-sr">Caricamento del calendario di prenotazione…</span>
+    <div aria-hidden="true">
+      <span class="bk-skel bk-skel--title"></span>
+      <span class="bk-skel bk-skel--row"></span>
+      <span class="bk-skel bk-skel--row"></span>
+      <span class="bk-skel bk-skel--row"></span>
+      <span class="bk-skel bk-skel--title"></span>
+      <div class="bk-boot__days">{Array.from({ length: 7 }, () => <span class="bk-skel bk-skel--day"></span>)}</div>
+    </div>
   </div>
 
   <form class="bk-form" data-bk-form novalidate hidden>
@@ -35,7 +49,7 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 
     <fieldset class="bk-step">
       <legend><span class="bk-num">2</span> Giorno</legend>
-      <div class="bk-days" data-bk-days><p class="bk-muted">Caricamento degli orari disponibili…</p></div>
+      <div class="bk-days" data-bk-days></div>
     </fieldset>
 
     <fieldset class="bk-step">
@@ -74,11 +88,11 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 
     <div class="bk-summary" data-bk-summary hidden></div>
     <p class="bk-alert" data-bk-alert role="alert" hidden></p>
-    <button type="submit" class="btn btn-primary bk-submit" data-bk-submit>Conferma la prenotazione</button>
+    <button type="submit" class="btn btn-primary btn-lg bk-submit" data-bk-submit><span class="bk-spinner" aria-hidden="true"></span><span data-bk-submit-label>Conferma la prenotazione</span></button>
   </form>
 
   <div class="bk-done" data-bk-done hidden tabindex="-1">
-    <p class="bk-done__tag">Prenotazione confermata</p>
+    <p class="bk-done__tag"><span class="bk-done__check"><Icon name="check" size={20} /></span>Prenotazione confermata</p>
     <h2 class="bk-done__title" data-bk-done-when></h2>
     <p data-bk-done-what></p>
     <p data-bk-done-mail>Le abbiamo inviato un'email di conferma con il link per disdire o spostare l'appuntamento.</p>
@@ -127,7 +141,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       const req = ++slotsReq;
       chosenDate = '';
       chosenSlot = null;
-      daysBox.innerHTML = '<p class="bk-muted">Caricamento degli orari disponibili…</p>';
+      daysBox.innerHTML = '<span class="bk-skel bk-skel--day"></span>'.repeat(7); // loading state: placeholder day tiles
+      daysBox.setAttribute('aria-busy', 'true');
       timesBox.innerHTML = '<p class="bk-muted">Scelga prima un giorno.</p>';
       updateSummary();
       if (!form.hidden) announce('Caricamento degli orari disponibili.');
@@ -138,6 +153,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
         if (!data.ok) throw new Error(data.error);
         root.querySelector('[data-bk-fallback]')!.setAttribute('hidden', '');
         form.hidden = false;
+        root.dataset.state = 'ready';
+        daysBox.removeAttribute('aria-busy');
         $('[data-bk-demo]').hidden = !data.demo;
         root.dataset.demo = data.demo ? '1' : '';
         days = data.days;
@@ -145,7 +162,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
         return true;
       } catch {
         if (req !== slotsReq) return false;
-        if (form.hidden) return false; // keep the fallback callout
+        daysBox.removeAttribute('aria-busy');
+        if (form.hidden) { root.dataset.state = 'fallback'; return false; } // show the fallback callout
         const msg = `Non riusciamo a caricare gli orari. Ricarichi la pagina tra qualche minuto.${fallback}`;
         daysBox.innerHTML = `<p class="bk-muted">${msg}</p>`;
         announce(msg);
@@ -302,7 +320,8 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
       pending = on;
       for (const fs of steps) fs.disabled = on; // service, day, time and details are locked while sending
       submit.disabled = on;
-      submit.textContent = on ? 'Invio in corso…' : 'Conferma la prenotazione';
+      submit.classList.toggle('is-pending', on);
+      $('[data-bk-submit-label]').textContent = on ? 'Invio in corso…' : 'Conferma la prenotazione';
       form.setAttribute('aria-busy', on ? 'true' : 'false');
     }
 
@@ -322,76 +341,103 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 </script>
 
 <style>
-  .bk { margin: 8px 0 24px; }
-  .bk-form { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 8px 24px 24px; }
-  .bk-demo { margin: 16px 0 0; padding: 10px 14px; background: #fff7d6; border-radius: var(--radius-s); font-size: 15px; }
-  .bk-step { border: 0; margin: 0; padding: 20px 0 4px; min-width: 0; }
+  .bk { margin: 0 0 var(--space-6); }
+  /* Form holds radius-s tiles at its padding edge: radius = radius-s + padding */
+  .bk-form, .bk-boot { --pad: var(--space-6); background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--radius-s) + var(--pad)); padding: var(--space-2) var(--pad) var(--pad); }
+  .bk-demo { margin: var(--space-4) 0 0; padding: 10px 14px; background: var(--notice-soft); border-radius: var(--radius-s); font-size: 15px; }
+  .bk-step { border: 0; margin: 0; padding: var(--space-5) 0 var(--space-1); min-width: 0; }
   .bk-step + .bk-step { border-top: 1px solid var(--line); }
-  .bk-step legend { display: flex; align-items: center; gap: 10px; float: left; width: 100%; margin-bottom: 14px; font-weight: 700; font-size: 18px; color: var(--brand-dark); }
+  .bk-step legend { display: flex; align-items: center; gap: 10px; float: left; width: 100%; margin-bottom: 14px; font-weight: 700; font-size: var(--fs-md); color: var(--brand-dark); }
   .bk-step legend + * { clear: both; }
-  .bk-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-size: 14px; }
+  .bk-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-size: var(--fs-sm); }
   .bk-muted { color: var(--muted); margin: 0; }
   .bk :global(input[type=radio]) { position: absolute; opacity: 0; width: 1px; height: 1px; }
 
+  /* Loading states: boot skeleton replaces the "not available" flash; day tiles shimmer while slots load */
+  .bk-boot { display: none; padding-top: var(--space-6); }
+  :global(.js) .bk:not([data-state]) .bk-boot { display: block; }
+  :global(.js) .bk:not([data-state='fallback']) [data-bk-fallback] { display: none; }
+  .bk-boot__days { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-2); }
+  .bk :global(.bk-skel) { display: block; border-radius: var(--radius-s); background: linear-gradient(90deg, var(--brand-soft) 0%, #f1f7f7 50%, var(--brand-soft) 100%) 0 0 / 200% 100%; animation: bk-shimmer 1.2s linear infinite; }
+  .bk-skel--title { width: 140px; height: 24px; margin-bottom: 14px; }
+  .bk-skel--row { height: 56px; margin-bottom: 10px; }
+  .bk-skel--row + .bk-skel--title { margin-top: var(--space-6); }
+  .bk :global(.bk-skel--day) { min-height: 76px; }
+  @keyframes bk-shimmer { to { background-position: -200% 0; } }
+
   /* Selectable tiles (service, day, time) share one look */
-  .bk-service, .bk :global(.bk-day), .bk :global(.bk-time) { position: relative; cursor: pointer; border: 2px solid var(--line); border-radius: var(--radius-s); background: #fff; transition: border-color .15s, background .15s; }
+  .bk-service, .bk :global(.bk-day), .bk :global(.bk-time) { position: relative; cursor: pointer; border: 2px solid var(--line); border-radius: var(--radius-s); background: var(--card); transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
   .bk-service:hover, .bk :global(.bk-day:hover), .bk :global(.bk-time:hover) { border-color: var(--brand); }
+  .bk-service:active, .bk :global(.bk-day:active), .bk :global(.bk-time:active) { transform: scale(.97); }
   .bk-service:has(input:checked), .bk :global(.bk-day:has(input:checked)), .bk :global(.bk-time:has(input:checked)) { border-color: var(--brand); background: var(--brand-soft); }
   .bk-service:has(input:focus-visible), .bk :global(.bk-day:has(input:focus-visible)), .bk :global(.bk-time:has(input:focus-visible)) { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   .bk-services { display: grid; gap: 10px; }
-  .bk-service { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; }
+  .bk-service { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); min-height: 56px; padding: var(--space-3) var(--space-4); }
   .bk-service__name { font-weight: 600; }
   .bk-service__meta { flex: 0 0 auto; font-size: 15px; color: var(--muted); }
   .bk-service:has(input:checked) .bk-service__meta { color: var(--brand-dark); font-weight: 600; }
 
-  .bk-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .bk :global(.bk-day) { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; min-height: 76px; line-height: 1.2; }
-  .bk :global(.bk-day__wd), .bk :global(.bk-day__mon) { font-size: 13px; color: var(--muted); text-transform: capitalize; }
+  .bk-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-2); }
+  .bk :global(.bk-day) { display: flex; flex-direction: column; align-items: center; padding: var(--space-2) var(--space-1); min-height: 76px; line-height: 1.2; animation: bk-in var(--dur) var(--ease) backwards; }
+  .bk :global(.bk-day__wd), .bk :global(.bk-day__mon) { font-size: var(--fs-xs); color: var(--muted); text-transform: capitalize; }
   .bk :global(.bk-day__num) { font-size: 20px; font-weight: 700; color: var(--brand-dark); margin: 2px 0; }
   .bk :global(.bk-day:has(input:disabled)) { cursor: default; opacity: .4; background: transparent; border-style: dashed; }
   .bk :global(.bk-day:has(input:disabled):hover) { border-color: var(--line); }
+  .bk :global(.bk-day:has(input:disabled):active) { transform: none; }
 
-  .bk :global(.bk-timegroup__name) { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .bk :global(.bk-timegroup) { animation: bk-in var(--dur) var(--ease) backwards; }
+  .bk :global(.bk-timegroup__name) { margin: 0 0 var(--space-2); font-size: var(--fs-sm); font-weight: 600; color: var(--muted); }
   .bk :global(.bk-timegroup + .bk-timegroup) { margin-top: 14px; }
-  .bk :global(.bk-times) { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+  .bk :global(.bk-times) { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: var(--space-2); }
   .bk :global(.bk-time) { display: grid; place-items: center; min-height: 48px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
   .bk-fields { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
   .bk-field { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
   .bk-field:first-child { grid-column: 1 / -1; }
-  .bk-field input { font: inherit; font-weight: 400; min-height: 48px; padding: 10px 14px; border: 2px solid var(--line); border-radius: var(--radius-s); background: #fff; color: var(--text); }
+  .bk-field input { font: inherit; font-weight: 400; min-height: 48px; padding: 10px 14px; border: 2px solid var(--line); border-radius: var(--radius-s); background: var(--card); color: var(--text); transition: border-color var(--dur-fast) var(--ease); }
   .bk-field input:focus { border-color: var(--brand); }
-  .bk-field input[aria-invalid=true] { border-color: #b3261e; }
+  .bk-field input[aria-invalid=true] { border-color: var(--danger); }
   .bk-check { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; min-height: 44px; }
   .bk-check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--brand); flex: 0 0 auto; }
-  .bk-err { display: none; color: #b3261e; font-weight: 500; font-size: 14px; }
-  .bk-err.is-on { display: block; }
-  .bk-fields > .bk-err { grid-column: 1 / -1; margin-top: -8px; }
+  .bk-err { display: none; color: var(--danger); font-weight: 500; font-size: var(--fs-sm); }
+  .bk-err.is-on { display: block; animation: bk-in var(--dur) var(--ease); }
+  .bk-fields > .bk-err { grid-column: 1 / -1; margin-top: calc(-1 * var(--space-2)); }
   .bk-hp { position: absolute; left: -9999px; }
   .bk-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-  .bk-step:disabled { opacity: .6; }
-  .bk-note { font-size: 14px; color: var(--muted); margin: 14px 0 0; }
+  .bk-step:disabled { opacity: .6; transition: opacity var(--dur) var(--ease); }
+  .bk-note { font-size: var(--fs-sm); color: var(--muted); margin: 14px 0 0; }
 
-  .bk-summary { display: grid; gap: 2px; margin: 20px 0 0; padding: 14px 16px; background: var(--brand-soft); border-radius: var(--radius-s); }
-  .bk-summary :global(.bk-muted) { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
-  .bk-alert { margin: 16px 0 0; padding: 12px 14px; border-radius: var(--radius-s); background: #fdecea; color: #8c1d18; font-weight: 500; }
-  .bk-submit { width: 100%; margin-top: 20px; font: inherit; font-weight: 700; cursor: pointer; }
-  .bk-submit:disabled { opacity: .7; cursor: progress; }
+  /* Feedback: summary, alert and confirmation appear with a short fade so the change is noticed */
+  .bk-summary { display: grid; gap: 2px; margin: var(--space-5) 0 0; padding: 14px var(--space-4); background: var(--brand-soft); border-radius: var(--radius-s); animation: bk-in var(--dur) var(--ease); }
+  .bk-summary :global(.bk-muted) { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .bk-alert { margin: var(--space-4) 0 0; padding: var(--space-3) 14px; border-radius: var(--radius-s); background: var(--danger-soft); color: var(--danger-text); font-weight: 500; animation: bk-in var(--dur) var(--ease), bk-nudge 300ms var(--ease); }
+  .bk-submit { width: 100%; margin-top: var(--space-5); }
+  .bk-submit:disabled { cursor: progress; }
+  .bk-spinner { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: bk-spin .7s linear infinite; }
+  .bk-submit.is-pending .bk-spinner { display: inline-block; }
 
-  .bk-done { background: var(--brand-soft); border-radius: var(--radius-l); padding: 28px 24px; }
+  .bk-done { background: var(--brand-soft); border-radius: var(--radius-l); padding: var(--space-8) var(--space-6); animation: bk-in var(--dur) var(--ease); }
   .bk-done:focus { outline: none; }
-  .bk-done__tag { display: inline-block; margin: 0 0 10px; padding: 4px 12px; border-radius: 999px; background: var(--accent); color: var(--brand-dark); font-weight: 700; font-size: 14px; }
+  .bk-done__tag { display: flex; align-items: center; gap: 10px; margin: 0 0 var(--space-3); color: var(--brand-dark); font-weight: 700; }
+  .bk-done__check { flex: 0 0 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: var(--on-dark); animation: bk-pop 360ms var(--ease) 80ms both; }
   .bk-done__title { margin: 0 0 6px; font-size: 26px; }
   .bk-done p { margin: 0 0 10px; }
 
+  @keyframes bk-in { from { opacity: 0; transform: translateY(4px); } }
+  @keyframes bk-nudge { 30% { transform: translateX(-4px); } 60% { transform: translateX(3px); } }
+  @keyframes bk-pop { from { opacity: 0; transform: scale(.5); } 70% { transform: scale(1.08); } }
+  @keyframes bk-spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 640px) {
-    .bk-form { padding: 4px 16px 20px; border-radius: var(--radius-m); }
+    .bk-form, .bk-boot { --pad: var(--space-4); padding-top: var(--space-1); }
+    .bk-boot { padding-top: var(--space-5); }
     .bk-fields { grid-template-columns: 1fr; }
     /* Days: one swipeable row on phones */
-    .bk-days { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 8px; scrollbar-width: none; }
-    .bk :global(.bk-day) { flex: 0 0 64px; scroll-snap-align: start; }
-    .bk-service { padding: 10px 14px; font-size: 16px; line-height: 1.35; }
-    .bk-service__meta { font-size: 14px; }
+    .bk-days, .bk-boot__days { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(-1 * var(--pad)); padding: 2px var(--pad) var(--space-2); scrollbar-width: none; }
+    .bk-boot__days { overflow: hidden; }
+    .bk :global(.bk-day), .bk :global(.bk-skel--day) { flex: 0 0 64px; scroll-snap-align: start; }
+    .bk-service { padding: 10px 14px; font-size: var(--fs-body); line-height: 1.35; }
+    .bk-service__meta { font-size: var(--fs-sm); }
   }
 </style>

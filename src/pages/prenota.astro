@@ -5,7 +5,7 @@ import InfoCallout from '../components/InfoCallout.astro';
 import BookingForm from '../components/BookingForm.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." eyebrow="Prenota" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
   <section>
     <div class="container prose">
       <BookingForm />
@@ -13,7 +13,7 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
         <>
           <h2>Preferisce scriverci o chiamare?</h2>
           <div class="actions">
-            {wa && <a class="btn btn-dark" href={wa}>Ci scriva su WhatsApp</a>}
+            {wa && <a class="btn" href={wa}>Ci scriva su WhatsApp</a>}
             {site.phone && <a class="btn" href={`tel:${site.phone}`}>Ci chiami: {site.phone}</a>}
           </div>
         </>
