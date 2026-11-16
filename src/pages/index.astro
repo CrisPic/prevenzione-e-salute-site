@@ -30,7 +30,7 @@ const audience = [
   'Palestre, associazioni e aziende',
 ];
 const steps = [
-  site.whatsapp || site.phone ? 'Prenoti online, su WhatsApp o per telefono.' : 'Prenoti online scegliendo giorno e orario.',
+  ({ 'wa+tel': 'Prenoti online, su WhatsApp o per telefono.', wa: 'Prenoti online o su WhatsApp.', tel: 'Prenoti online o per telefono.', none: 'Prenoti online scegliendo giorno e orario.' })[site.whatsapp && site.phone ? 'wa+tel' : site.whatsapp ? 'wa' : site.phone ? 'tel' : 'none'],
   "Si presenti con documento d'identità e tessera sanitaria.",
   'Visita di circa 10 minuti.',
   "Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità.",

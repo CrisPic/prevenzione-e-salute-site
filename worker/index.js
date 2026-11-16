@@ -9,6 +9,7 @@
 import { booking } from '../src/data/site.js';
 import * as mock from './engines/mock.js';
 import * as calcom from './engines/calcom.js';
+import { EngineError } from './engines/calcom.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -42,12 +43,22 @@ export default {
       }
 
       if (url.pathname === '/api/booking' && request.method === 'POST') {
-        // Same-origin only: blocks other sites from posting bookings through a visitor's browser
+        // Same-origin only. Browsers always send Origin on POST, so a missing one means a script.
         const origin = request.headers.get('origin');
-        if (origin && origin !== url.origin) return json({ ok: false, error: 'forbidden' }, 403);
+        if (origin !== url.origin) return json({ ok: false, error: 'forbidden' }, 403);
+
+        // Per-client limit before anything reaches Cal.com. Active only when the
+        // BOOKING_RATE_LIMIT binding exists in wrangler.jsonc (Cloudflare rate limiting).
+        if (env.BOOKING_RATE_LIMIT) {
+          const key = request.headers.get('cf-connecting-ip') || 'unknown';
+          const { success } = await env.BOOKING_RATE_LIMIT.limit({ key });
+          if (!success) return json({ ok: false, error: 'rate_limited' }, 429);
+        }
 
         const body = await request.json().catch(() => null);
         const input = validate(body);
+        // The chosen time expired or is out of range while the form was open: same recovery as a taken slot.
+        if (input.error && input.field === 'start') return json({ ok: false, error: 'slot_unavailable' }, 409);
         if (input.error) return json({ ok: false, error: input.error, field: input.field }, 400);
         if (input.spam) return json({ ok: true, demo: true }); // honeypot filled: pretend success
 
@@ -58,7 +69,9 @@ export default {
 
       return json({ ok: false, error: 'not_found' }, 404);
     } catch (err) {
-      console.error('booking api error', err);
+      // Only our own diagnostic code + status: error messages (fetch failures, provider text) can contain personal data
+      const known = err instanceof EngineError;
+      console.error('booking api error', JSON.stringify({ path: url.pathname, code: known ? err.code : 'unexpected', status: known ? err.status : undefined }));
       return json({ ok: false, error: 'server' }, 502);
     }
   },
