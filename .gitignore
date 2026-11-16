@@ -6,8 +6,10 @@ dist/
 .DS_Store
 
 # Local AI context (not published)
+AGENTS.md
 CLAUDE.md
 TASKS.md
+HANDOFF.md
 
 # Local Worker secrets
 .dev.vars
