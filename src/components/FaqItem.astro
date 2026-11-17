@@ -18,7 +18,8 @@ const { q, a, open = false } = Astro.props;
   /* Plus / minus drawn with two bars */
   .faq__icon { flex: 0 0 16px; height: 16px; position: relative; }
   .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 0; top: 7px; width: 16px; height: 2px; background: var(--brand); }
-  .faq__icon::after { transform: rotate(90deg); transition: transform var(--dur) var(--ease); }
+  .faq__icon::after { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: no-preference) { .faq__icon::after { transition: transform var(--dur) var(--ease); } }
   .faq[open] .faq__icon::after { transform: rotate(0deg); }
   .faq__a { padding: 0 0 var(--space-4); color: var(--text); max-width: 60ch; }
   .faq__a :global(p) { margin: 0; }

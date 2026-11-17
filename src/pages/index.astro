@@ -109,7 +109,7 @@ const steps = [
   .toc a { flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 var(--space-2); font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--brand-dark); text-decoration: none; text-align: center; line-height: 1.2; }
   .toc a + a { border-left: 1px solid var(--line); }
   .toc a:hover { background: var(--brand-soft); }
-  @media (min-width: 821px) { .toc { display: none; } }
+  @media (width > 51.25em) { .toc { display: none; } }
 
   .opening { padding-top: var(--space-6); }
   .hero { display: grid; grid-template-areas: 'kicker' 'title' 'facts' 'cta'; }
@@ -121,7 +121,7 @@ const steps = [
   .sec-body > .small { margin: var(--space-4) 0 var(--space-1); }
   .sec-body > .arrow-link { margin-top: var(--space-2); }
 
-  @media (min-width: 821px) {
+  @media (width > 51.25em) {
     .opening { padding-top: var(--space-16); }
     .hero { grid-template-columns: 1.15fr 1fr; grid-template-rows: auto auto 1fr; grid-template-areas: 'kicker facts' 'title facts' 'cta facts'; column-gap: var(--space-16); }
     .hero__cta { align-self: start; margin-top: var(--space-2); max-width: 26rem; }

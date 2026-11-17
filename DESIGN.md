@@ -7,7 +7,7 @@ Tokens live in one place: `src/layouts/Base.astro` `:root`. Shared classes are d
 - The service name is the page title. Price, duration, validity, location and what to bring come before any brand message.
 - Sections are separated by a 2 px dark rule (`.sec`), never by cards, coloured bands or shadows.
 - Azzurro (`--accent`) means "act" and is used for nothing else: one `.btn-primary` per view. Mark that button `data-primary-cta` so the mobile bar steps aside while it is on screen.
-- No decorative icons, badges, gradients or scroll animation. The only line above a title is the `.kicker`, which says what the page covers, not a slogan. Motion (≤ 200 ms) only confirms an interaction and is disabled under `prefers-reduced-motion`.
+- No decorative icons, badges, gradients or scroll animation. The only line above a title is the `.kicker`, which says what the page covers, not a slogan. Motion (≤ 200 ms) only confirms an interaction; movement is opted into per rule under `prefers-reduced-motion: no-preference` (colour fades stay; the send spinner just slows down).
 - Missing contacts and photos are hidden, never shown as `[placeholder]`. Exceptions: opening hours read "In arrivo" (the FAQ refers to them) and P.IVA / PEC stay in the footer.
 - Italian, formal "lei", informative only (health advertising rules).
 
@@ -16,7 +16,7 @@ Tokens live in one place: `src/layouts/Base.astro` `:root`. Shared classes are d
 | --- | --- |
 | Colour | `--brand` blue, `--brand-dark` headings/rules/footer, `--brand-soft` selected states, `--accent` azzurro action (white `--on-accent` text), `--text`, `--muted` (5.6:1), `--line` hairline, `--rule` section rule, `--line-control` input edges (≥ 3:1), `--bg` cool white, `--card` form surface only |
 | Space | `--space-1…16` on a 4 px base, `--gutter` 16 / 32 px |
-| Type | Inter only. `--fs-body` 17 px / 1.6, `--fs-sm` 15, `--fs-xs` 13, `--fs-h1/h2/h3`, `--measure` 68ch |
+| Type | Inter only, all sizes in rem so they follow the reader's text size (never set a root font-size). `--fs-body` 1.0625rem (17 px) / 1.6, `--fs-sm` 15 px, `--fs-xs` 13 px, `--fs-h1/h2/h3` (fluid, with a rem part), `--measure` 68ch. Breakpoints in em: phone layout at `width <= 51.25em` |
 | Shape | `--radius-s` 8 (inputs, tiles), `--radius-m` 10 (buttons, notes), `--radius-l` 14 (form, confirmation) |
 | Motion | `--dur-fast` 120 ms, `--dur` 200 ms, `--ease` |
 

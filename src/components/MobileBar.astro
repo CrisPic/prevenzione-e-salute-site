@@ -19,7 +19,7 @@ const recap = items.length === 1 && items[0] === 'book' && cert;
     {tel && <a href={tel} class="btn">Chiama</a>}
   </nav>
 ) : (
-  <style is:inline>@media (max-width: 820px) { :root { --mbar-space: 0px; } }</style>
+  <style is:inline>@media (width <= 51.25em) { :root { --mbar-space: 0px; } }</style>
 )}
 
 <script>
@@ -38,11 +38,11 @@ const recap = items.length === 1 && items[0] === 'book' && cert;
 
 <style>
   .mbar { display: none; }
-  @media (max-width: 820px) {
+  @media (width <= 51.25em) {
     .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; gap: var(--space-2); align-items: center; padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom)); background: var(--bg); border-top: 2px solid var(--rule); }
     .mbar .btn { flex: 1 1 0; min-height: 48px; padding: 0 var(--space-3); }
     .mbar--recap .btn { flex: 0 0 auto; padding: 0 var(--space-6); }
-    .mbar__recap { flex: 1 1 auto; margin: 0; display: grid; font-size: var(--fs-xs); line-height: 1.35; color: var(--muted); }
+    .mbar__recap { flex: 1 1 auto; min-width: 0; margin: 0; display: grid; font-size: var(--fs-xs); line-height: 1.35; color: var(--muted); }
     .mbar__recap strong { font-size: var(--fs-sm); color: var(--brand-dark); font-variant-numeric: tabular-nums; }
     .mbar.is-away { visibility: hidden; }
   }
