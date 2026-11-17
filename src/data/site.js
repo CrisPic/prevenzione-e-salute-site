@@ -49,13 +49,13 @@ export const contactChannels = () => [
 export const serviceInfo = [
   {
     id: 'certificato', title: 'Certificato medico per attività sportiva non agonistica', price: `€${site.certificatePrice}`, validity: '12 mesi',
-    summary: 'Per lo sport praticato con società e associazioni sportive e per le attività sportive parascolastiche.',
-    details: "Necessario per l'attività sportiva non agonistica praticata con società e associazioni sportive, anche in palestra, e per le attività sportive parascolastiche. La visita dura circa 10 minuti e comprende anamnesi, esame obiettivo e misurazione della pressione. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
+    summary: 'Per lo sport praticato con società e associazioni sportive affiliate al CONI e per le attività parascolastiche.',
+    details: "Necessario per l'attività sportiva non agonistica praticata con società e associazioni sportive affiliate al CONI e per le attività sportive parascolastiche. La visita dura circa 10 minuti e comprende anamnesi, esame obiettivo e misurazione della pressione arteriosa. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
   },
   {
     id: 'ludico', title: 'Certificato medico per attività ludico-motoria', price: `€${site.certificatePrice}`, validity: '12 mesi',
-    summary: 'Per attività fisica amatoriale e ricreativa, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede.',
-    details: "Per l'attività fisica amatoriale e ricreativa svolta al di fuori di società e associazioni sportive, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. Non vale per l'attività sportiva organizzata né per le gare. La visita dura circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
+    summary: 'Per attività fisica amatoriale e ricreativa, in palestra o nei corsi fitness.',
+    details: "Per l'attività fisica amatoriale e ricreativa svolta al di fuori di società e associazioni sportive, ad esempio in palestra o nei corsi fitness, quando la struttura lo richiede. La visita dura circa 10 minuti. Il certificato viene rilasciato al termine della visita, se il medico conferma l'idoneità. Il certificato è valido 12 mesi dalla data di rilascio.",
   },
   {
     id: 'specialistica', title: 'Visite mediche specialistiche', price: 'Su richiesta',
