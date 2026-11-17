@@ -56,16 +56,16 @@ const schemas = schema ? [schema].flat() : [];
      Every page and component reads these tokens; conventions are summarised in DESIGN.md.
      - Information first: the service name is the title, practical facts sit in a <dl> (.facts).
      - Sections are separated by a dark 2px rule (.sec), not by cards or coloured bands.
-     - Apricot = action only (one .btn-primary per view) and nothing else.
+     - Azzurro = action only (one .btn-primary per view) and nothing else.
      - No decorative icons, badges, gradients or scroll animation. Motion only confirms an interaction.
      ========================================================================== */
   :root {
-    /* Colour: palette C (sage + apricot) on warm paper */
+    /* Colour: sage + azzurro on warm paper */
     --brand: #3f6b57;        /* links, labels, selected states */
     --brand-dark: #22392f;   /* headings, section rules, footer */
     --brand-soft: #e9f0ea;   /* selected tiles, booking summary */
-    --accent: #f4a64a;       /* primary action only: 6.1:1 with --brand-dark text */
-    --accent-dark: #e8912a;
+    --accent: #7cc4ec;       /* azzurro, primary action only: 6.5:1 with --brand-dark text */
+    --accent-dark: #5fb3e4;  /* hover: 5.3:1 with --brand-dark text */
     --text: #1f2622;
     --muted: #5e665f;        /* 5.6:1 on --bg */
     --line: #e2ddd2;         /* hairlines between rows (decorative) */
@@ -143,7 +143,7 @@ const schemas = schema ? [schema].flat() : [];
   .kicker { margin: 0 0 var(--space-3); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--brand); }
   .lead { font-size: var(--fs-lead); color: var(--muted); max-width: 40em; margin: 0; }
 
-  /* Buttons: one primary (apricot) per view, everything else outlined */
+  /* Buttons: one primary (azzurro) per view, everything else outlined */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 48px; padding: 0 var(--space-5); border-radius: var(--radius-m); font: inherit; font-size: var(--fs-body); font-weight: var(--fw-semibold); line-height: 1.2; text-decoration: none; cursor: pointer; border: 2px solid var(--brand); color: var(--brand-dark); background: transparent; transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
   .btn:hover { background: var(--brand-soft); color: var(--brand-dark); }
   .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); font-weight: var(--fw-bold); }

@@ -6,7 +6,7 @@ Tokens live in one place: `src/layouts/Base.astro` `:root`. Shared classes are d
 ## Principles
 - The service name is the page title. Price, duration, validity, location and what to bring come before any brand message.
 - Sections are separated by a 2 px dark rule (`.sec`), never by cards, coloured bands or shadows.
-- Apricot (`--accent`) means "act" and is used for nothing else: one `.btn-primary` per view. Mark that button `data-primary-cta` so the mobile bar steps aside while it is on screen.
+- Azzurro (`--accent`) means "act" and is used for nothing else: one `.btn-primary` per view. Mark that button `data-primary-cta` so the mobile bar steps aside while it is on screen.
 - No decorative icons, badges, gradients or scroll animation. The only line above a title is the `.kicker`, which says what the page covers, not a slogan. Motion (≤ 200 ms) only confirms an interaction and is disabled under `prefers-reduced-motion`.
 - Missing contacts and photos are hidden, never shown as `[placeholder]`. Exceptions: opening hours read "In arrivo" (the FAQ refers to them) and P.IVA / PEC stay in the footer.
 - Italian, formal "lei", informative only (health advertising rules).
