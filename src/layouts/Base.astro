@@ -21,7 +21,7 @@ const schemas = schema ? [schema].flat() : [];
     <meta name="description" content={description} />
     {robots && <meta name="robots" content={robots} />}
     {!noindex && <link rel="canonical" href={canonical} />}
-    <meta name="theme-color" content="#22392f" />
+    <meta name="theme-color" content="#12385a" />
     {site.showEnglish && <link rel="alternate" hreflang="it" href={new URL('/', Astro.site)} />}
     {site.showEnglish && <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />}
     {site.showEnglish && <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />}
@@ -52,7 +52,7 @@ const schemas = schema ? [schema].flat() : [];
 
 <style is:global>
   /* ==========================================================================
-     Design system "Civico caldo" (2026-11-16): precise civic layout on warm paper.
+     Design system "Civico caldo" (2026-11-16): precise civic layout; palette "Azzurro clinico" (2026-11-17).
      Every page and component reads these tokens; conventions are summarised in DESIGN.md.
      - Information first: the service name is the title, practical facts sit in a <dl> (.facts).
      - Sections are separated by a dark 2px rule (.sec), not by cards or coloured bands.
@@ -60,22 +60,23 @@ const schemas = schema ? [schema].flat() : [];
      - No decorative icons, badges, gradients or scroll animation. Motion only confirms an interaction.
      ========================================================================== */
   :root {
-    /* Colour: sage + azzurro on warm paper */
-    --brand: #3f6b57;        /* links, labels, selected states */
-    --brand-dark: #22392f;   /* headings, section rules, footer */
-    --brand-soft: #e9f0ea;   /* selected tiles, booking summary */
-    --accent: #7cc4ec;       /* azzurro, primary action only: 6.5:1 with --brand-dark text */
-    --accent-dark: #5fb3e4;  /* hover: 5.3:1 with --brand-dark text */
-    --text: #1f2622;
-    --muted: #5e665f;        /* 5.6:1 on --bg */
-    --line: #e2ddd2;         /* hairlines between rows (decorative) */
+    /* Colour: "Azzurro clinico", deep blue + azzurro on cool white */
+    --brand: #1f6a9a;        /* links, labels, selected states: 5.6:1 on --bg */
+    --brand-dark: #12385a;   /* headings, section rules, footer */
+    --brand-soft: #e3f0f8;   /* selected tiles, booking summary */
+    --accent: #1f78b4;       /* azzurro, primary action only: 4.8:1 with white text (--on-accent) */
+    --accent-dark: #18669a;  /* hover: 6.2:1 with white text */
+    --on-accent: #ffffff;
+    --text: #1a2430;
+    --muted: #566676;        /* 5.6:1 on --bg */
+    --line: #dbe5ec;         /* hairlines between rows (decorative) */
     --rule: var(--brand-dark); /* 2px section rule */
-    --line-control: #879289; /* edges of inputs and selectable tiles: ≥3:1 on white and on --bg */
-    --bg: #faf8f4;
+    --line-control: #7f93a3; /* edges of inputs and selectable tiles: ≥3:1 on white and on --bg */
+    --bg: #f7fafc;
     --card: #ffffff;         /* form surface only */
-    --skeleton-hi: #f4f7f3;
+    --skeleton-hi: #eef4f8;
     --on-dark: #ffffff;
-    --on-dark-soft: #d6e3da;
+    --on-dark-soft: #cfe0ee;
     --danger: #b3261e;
     --danger-soft: #fdecea;
     --danger-text: #8c1d18;
@@ -146,7 +147,7 @@ const schemas = schema ? [schema].flat() : [];
   /* Buttons: one primary (azzurro) per view, everything else outlined */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 48px; padding: 0 var(--space-5); border-radius: var(--radius-m); font: inherit; font-size: var(--fs-body); font-weight: var(--fw-semibold); line-height: 1.2; text-decoration: none; cursor: pointer; border: 2px solid var(--brand); color: var(--brand-dark); background: transparent; transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
   .btn:hover { background: var(--brand-soft); color: var(--brand-dark); }
-  .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--brand-dark); font-weight: var(--fw-bold); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: var(--fw-bold); }
   .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
   .btn-lg { min-height: 54px; padding: 0 var(--space-6); font-size: var(--fs-md); }
   .btn-block { display: flex; width: 100%; justify-content: space-between; }

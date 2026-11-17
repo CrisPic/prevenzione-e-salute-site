@@ -1,6 +1,6 @@
 # Design system – "Civico caldo"
 
-Chosen 2026-11-16: a precise, civic layout (information first, strong wayfinding) on warm paper.
+Chosen 2026-11-16: a precise, civic layout (information first, strong wayfinding). Palette "Azzurro clinico" chosen by the doctor 2026-11-17 from four azzurro variants (renders in `Claude outputs/redesign/azzurro/`).
 Tokens live in one place: `src/layouts/Base.astro` `:root`. Shared classes are defined right below them.
 
 ## Principles
@@ -14,7 +14,7 @@ Tokens live in one place: `src/layouts/Base.astro` `:root`. Shared classes are d
 ## Tokens (Base.astro)
 | Group | Tokens |
 | --- | --- |
-| Colour | `--brand` sage, `--brand-dark` headings/rules/footer, `--brand-soft` selected states, `--accent` action, `--text`, `--muted` (5.6:1), `--line` hairline, `--rule` section rule, `--line-control` input edges (≥ 3:1), `--bg` warm paper, `--card` form surface only |
+| Colour | `--brand` blue, `--brand-dark` headings/rules/footer, `--brand-soft` selected states, `--accent` azzurro action (white `--on-accent` text), `--text`, `--muted` (5.6:1), `--line` hairline, `--rule` section rule, `--line-control` input edges (≥ 3:1), `--bg` cool white, `--card` form surface only |
 | Space | `--space-1…16` on a 4 px base, `--gutter` 16 / 32 px |
 | Type | Inter only. `--fs-body` 17 px / 1.6, `--fs-sm` 15, `--fs-xs` 13, `--fs-h1/h2/h3`, `--measure` 68ch |
 | Shape | `--radius-s` 8 (inputs, tiles), `--radius-m` 10 (buttons, notes), `--radius-l` 14 (form, confirmation) |
