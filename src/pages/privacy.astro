@@ -1,29 +1,162 @@
 ---
 import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
+// DRAFT informativa (GDPR art. 13) + cookie policy, written 2026-11-21, reworked 2026-11-23:
+// the company (S.r.l.s.) is the controller for site, booking and contact data; the doctor,
+// who invoices patients directly, is a separate controller for the visit and is not named here.
+// Every point marked "DA VERIFICARE" below is an assumption that the doctor or a lawyer must confirm
+// before the site goes live. The full list of open points is in the review notes shared with the owner.
+const updated = '23 novembre 2026';
+// Where patients send privacy requests: email if set, otherwise PEC
+const privacyContact = site.email ? `l'email ${site.email}` : `la PEC ${site.pec}`;
 ---
-<Page title="Privacy e cookie | Prevenzione e Salute" description="Informativa privacy e cookie policy di Prevenzione e Salute, studio medico presso GetFIT a Milano. Il sito non usa cookie di profilazione." heading="Privacy e cookie">
-  <section class="sec">
+<Page title="Privacy e cookie | Prevenzione e Salute" description="Informativa privacy e cookie policy di Prevenzione e Salute, studio medico presso GetFIT a Milano. Il sito non usa cookie di profilazione." heading="Privacy e cookie" intro={`Come trattiamo i suoi dati personali quando visita il sito, prenota o viene in studio. Ultimo aggiornamento: ${updated}.`}>
+  <section class="sec" id="indice">
     <div class="container">
-      <div class="sec-head"><h2>Stato dell'informativa</h2></div>
-      <div class="sec-body">
-        <p class="note">L'informativa privacy completa e la cookie policy sono in preparazione e saranno pubblicate a breve.</p>
+      <div class="sec-head"><h2>In breve</h2></div>
+      <div class="sec-body prose">
+        <ul>
+          <li>Il titolare dei dati del sito e delle prenotazioni è la società {site.legalName}. Per la visita e il certificato il titolare è il medico che esegue la visita.</li>
+          <li>Per prenotare online chiediamo solo nome, telefono ed email. Non chiediamo dati sulla salute e cancelliamo la prenotazione 30 giorni dopo l'appuntamento.</li>
+          <li>Non vendiamo i suoi dati, non facciamo pubblicità e non usiamo cookie.</li>
+          <li>Può chiedere in ogni momento di vedere, correggere o cancellare i suoi dati.</li>
+        </ul>
+        <p>Indice: <a href="#titolare">Titolare</a> · <a href="#dati">Dati e finalità</a> · <a href="#prenotazioni">Prenotazioni online</a> · <a href="#destinatari">A chi li comunichiamo</a> · <a href="#conservazione">Conservazione</a> · <a href="#diritti">I suoi diritti</a> · <a href="#cookie">Cookie</a></p>
       </div>
     </div>
   </section>
+
+  <section class="sec" id="titolare">
+    <div class="container">
+      <div class="sec-head"><h2>Titolare del trattamento</h2></div>
+      <div class="sec-body prose">
+        {/* DA VERIFICARE: roles between the company and the doctor. Assumed: the company is controller for
+            site, booking and contact data; the doctor (who invoices patients directly) is an independent
+            controller for clinical and invoicing data and gives his own informativa in studio.
+            Confirm with a lawyer, and put the arrangement in writing between company and doctor. */}
+        <p>Il titolare del trattamento dei dati raccolti con il sito, le prenotazioni e i contatti è <strong>{site.legalName}</strong>, sede legale {site.registeredOffice}, P.IVA e C.F. {site.vat}.</p>
+        <p>Per la visita, il certificato e la fattura il titolare è il medico che esegue la visita, che le fornisce in studio la propria informativa. Il medico riceve dalla società solo l'orario e il servizio prenotato.</p>
+        <p>Per qualsiasi domanda sui suoi dati può scrivere al{site.email ? "l'email" : 'la PEC'} <a href={`mailto:${site.email || site.pec}`}>{site.email || site.pec}</a>{site.email && <> o alla PEC {site.pec}</>}.</p>
+        {/* DA VERIFICARE: the company processes only booking/contact data, not health data on a large scale,
+            so a DPO should not be required (GDPR art. 37). Confirm with a lawyer. */}
+        <p>La società non ha nominato un Responsabile della protezione dei dati (DPO), perché non è obbligatoria per l'attività che svolge.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="dati">
+    <div class="container">
+      <div class="sec-head"><h2>Quali dati trattiamo e perché</h2></div>
+      <div class="sec-body prose">
+        <h3>Navigazione sul sito</h3>
+        <p>Quando visita il sito, il server registra automaticamente alcuni dati tecnici: indirizzo IP, data e ora, pagina richiesta, tipo di browser. Servono a far funzionare il sito e a proteggerlo da abusi. Base giuridica: legittimo interesse del titolare (art. 6.1.f GDPR).</p>
+
+        <h3>Prenotazione online</h3>
+        <p>Nome e cognome, telefono, email, servizio e orario scelti. Servono a fissare l'appuntamento, inviarle la conferma e permetterle di disdirlo o spostarlo. Base giuridica: misure precontrattuali richieste da lei (art. 6.1.b GDPR). I dettagli sono nella sezione <a href="#prenotazioni">Prenotazioni online</a>.</p>
+
+        <h3>Contatti per telefono, WhatsApp o email</h3>
+        <p>Il suo nome, numero o indirizzo e il contenuto del messaggio. Li usiamo solo per risponderle. Base giuridica: misure precontrattuali richieste da lei (art. 6.1.b GDPR). Se ci scrive su WhatsApp, il servizio è fornito da WhatsApp Ireland Ltd (gruppo Meta) secondo le sue condizioni.</p>
+
+        <h3>Visita, certificato e fattura</h3>
+        {/* DA VERIFICARE: summary only; the doctor's own informativa (paper, in studio) covers health data
+            (art. 9.2.h GDPR, art. 2-septies Codice privacy), DM 24/04/2013 record keeping and Sistema TS. */}
+        <p>Durante la visita il medico raccoglie i dati necessari per visitarla, rilasciare il certificato ed emettere la fattura, compresi dati sulla sua salute. Questi dati sono trattati dal medico come titolare autonomo, tenuto al segreto professionale, e non passano dal sito né dalla società. Tutti i dettagli sono nell'informativa che riceve in studio.</p>
+
+        <p>I dati per la prenotazione sono necessari: senza questi dati non possiamo fissare l'appuntamento. Non usiamo i suoi dati per marketing e non prendiamo decisioni automatizzate o di profilazione su di lei.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="prenotazioni">
     <div class="container">
       <div class="sec-head"><h2>Prenotazioni online</h2></div>
       <div class="sec-body prose">
-        <p>Per prenotare chiediamo solo nome e cognome, telefono, email, servizio e orario scelti. Non inserisca informazioni sulla sua salute. I dati servono solo a gestire l'appuntamento e a inviarle la conferma.</p>
-        <p>Il modulo di prenotazione invia i dati al nostro server, che registra l'appuntamento nel calendario dello studio gestito con il servizio Cal.com. Il suo browser non si collega a servizi esterni e non vengono usati cookie.</p>
+        <p>Per prenotare chiediamo solo nome e cognome, telefono, email, servizio e orario scelti. Non inserisca informazioni sulla sua salute: le chiederà il medico durante la visita.</p>
+        <p>Il modulo invia i dati al nostro server, che registra l'appuntamento nel calendario dello studio gestito con il servizio Cal.com. Il suo browser non si collega direttamente a Cal.com e non vengono usati cookie.</p>
+        <p>Cal.com le invia l'email di conferma con il link per disdire o spostare l'appuntamento. Cal.com tratta i dati per conto della società, come responsabile del trattamento (art. 28 GDPR).</p>
+        <p>Il medico vede nel calendario condiviso solo l'orario e il servizio prenotato.</p>
+        <p>La casella "Ho letto l'informativa" conferma solo che ha letto questa pagina: non è un consenso, perché i dati della prenotazione servono a fornirle il servizio che ha chiesto.</p>
       </div>
     </div>
   </section>
+
+  <section class="sec" id="destinatari">
+    <div class="container">
+      <div class="sec-head"><h2>A chi comunichiamo i dati</h2></div>
+      <div class="sec-body prose">
+        <p>I dati del sito e delle prenotazioni sono trattati dalle persone autorizzate dalla società e tenute alla riservatezza. Li comunichiamo solo a:</p>
+        <ul>
+          {/* DA VERIFICARE: Cal.com and Cloudflare need a signed or accepted DPA (data processing agreement). */}
+          <li><strong>Cal.com, Inc.</strong> (Stati Uniti): calendario e gestione degli appuntamenti, email di conferma.</li>
+          <li><strong>Cloudflare, Inc.</strong> (Stati Uniti): ospitalità del sito e del server delle prenotazioni.</li>
+          {/* DA VERIFICARE: Aruba once the domain email is active; until then remove or name the current provider. */}
+          <li>Il fornitore della posta elettronica della società, per la sola gestione delle email.</li>
+          <li>Il medico che esegue la visita, per l'orario e il servizio prenotato.</li>
+          <li>Autorità pubbliche, quando lo richiede la legge.</li>
+        </ul>
+        <p>I fornitori agiscono come responsabili del trattamento, con un accordo che li obbliga a usare i dati solo per conto della società. GetFIT, la palestra che ospita lo studio, non riceve i suoi dati.</p>
+        <h3>Trasferimenti fuori dall'Unione europea</h3>
+        {/* DA VERIFICARE: check whether Cal.com and Cloudflare are certified under the EU-US Data Privacy
+            Framework (dataprivacyframework.gov) or rely on Standard Contractual Clauses, and say which.
+            Cal.com also offers an EU-hosted instance (cal.eu) that would avoid the transfer. */}
+        <p>Cal.com e Cloudflare possono trattare i dati negli Stati Uniti. Il trasferimento avviene sulla base della decisione di adeguatezza UE-USA (EU-U.S. Data Privacy Framework) o delle clausole contrattuali standard approvate dalla Commissione europea (art. 45 e 46 GDPR). Può chiedere copia delle garanzie scrivendoci.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="conservazione">
+    <div class="container">
+      <div class="sec-head"><h2>Per quanto tempo li conserviamo</h2></div>
+      <div class="sec-body prose">
+        {/* DA VERIFICARE: before publishing, test with a dummy booking that Cal.com, the synced calendar
+            and email copies are really deleted after 30 days. */}
+        <ul>
+          <li><strong>Dati tecnici di navigazione:</strong> pochi giorni, salvo necessità di indagare un abuso.</li>
+          <li><strong>Prenotazioni:</strong> 30 giorni dopo l'appuntamento o la disdetta, poi le cancelliamo dal calendario e dalle email.</li>
+          <li><strong>Messaggi di contatto:</strong> il tempo necessario a rispondere, al massimo 12 mesi.</li>
+        </ul>
+        <p>I tempi di conservazione della documentazione della visita e delle fatture sono indicati nell'informativa del medico.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="diritti">
+    <div class="container">
+      <div class="sec-head"><h2>I suoi diritti</h2></div>
+      <div class="sec-body prose">
+        <p>In ogni momento può chiedere di:</p>
+        <ul>
+          <li>sapere quali dati abbiamo e averne copia (accesso, art. 15 GDPR);</li>
+          <li>correggerli o completarli (rettifica, art. 16);</li>
+          <li>cancellarli, quando non dobbiamo conservarli per legge (art. 17);</li>
+          <li>limitarne l'uso (art. 18);</li>
+          <li>riceverli in un formato leggibile da computer (portabilità, art. 20);</li>
+          <li>opporsi al trattamento basato sul legittimo interesse (art. 21).</li>
+        </ul>
+        <p>Per i dati del sito e delle prenotazioni scriva alla società usando {privacyContact}. Per i dati della visita può rivolgersi direttamente al medico in studio. Le rispondiamo entro un mese, senza costi.</p>
+        <p>Se ritiene che il trattamento violi la normativa, può presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" rel="noopener">www.garanteprivacy.it</a>), Piazza Venezia 11, 00187 Roma.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="cookie">
     <div class="container">
-      <div class="sec-head"><h2>Cookie</h2></div>
+      <div class="sec-head"><h2>Cookie policy</h2></div>
       <div class="sec-body prose">
-        <p>Questo sito non utilizza cookie di profilazione né strumenti di analisi che tracciano gli utenti.</p>
+        {/* DA VERIFICARE: true for the code in this repo (fonts self-hosted, no analytics, no embeds).
+            Confirm in the Cloudflare dashboard that no Bot Management / Web Analytics cookies are switched on. */}
+        <p>Questo sito non usa cookie: né tecnici, né di analisi, né di profilazione. Non usa nemmeno altri strumenti che salvano informazioni sul suo dispositivo. Per questo non le mostriamo un banner per il consenso.</p>
+        <p>I caratteri tipografici sono ospitati sul nostro server e il sito non incorpora mappe, video o pulsanti social. Il link alle indicazioni su Google Maps e il link WhatsApp aprono servizi esterni solo se li sceglie lei: da quel momento valgono le informative di Google e di WhatsApp.</p>
+        <p>Se in futuro aggiungeremo cookie o strumenti di misurazione, aggiorneremo questa pagina e, quando serve, le chiederemo il consenso prima di usarli.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="modifiche">
+    <div class="container">
+      <div class="sec-head"><h2>Modifiche</h2></div>
+      <div class="sec-body prose">
+        <p>Possiamo aggiornare questa informativa. La data dell'ultima modifica è indicata in cima alla pagina. Ultimo aggiornamento: {updated}.</p>
       </div>
     </div>
   </section>

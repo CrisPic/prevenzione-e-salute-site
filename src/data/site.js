@@ -8,8 +8,14 @@ export const site = {
   phone: '',      // TODO
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
   email: '',      // TODO
-  vat: '[P.IVA]', // TODO
-  pec: '[PEC]',   // TODO
+  // Company that runs the site and the bookings (Registro Imprese visura, 27 Oct 2026).
+  // It is also the data controller on the Privacy page. The doctor's identity is kept off the site.
+  legalName: 'Prevenzione e Salute S.r.l.s.',
+  registeredOffice: 'Via Delio Tessa 1, 20121 Milano (MI)',
+  vat: '14915220967', // P.IVA and codice fiscale are the same number
+  rea: 'MI-2814915',
+  shareCapital: '€ 1.000 i.v.',
+  pec: 'prevenzioneesalutesrls@tutelapec.it',
   hours: '',      // TODO opening hours, e.g. 'Lun–Ven 9–19'; hidden on the site while empty
   certificatePrice: 50,
   showEnglish: false, // set to true once the English pages exist
