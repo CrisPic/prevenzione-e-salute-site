@@ -1,7 +1,7 @@
 ---
 import { site, contactChannels } from '../data/site.js';
-// Contact channels appear only once they exist in site.js. P.IVA and PEC stay visible
-// (placeholders until provided), as the footer must always show them.
+// Contact channels appear only once they exist in site.js.
+// Company details (art. 2250 c.c.) are always shown.
 const contacts = contactChannels();
 ---
 <footer class="footer">
@@ -12,7 +12,8 @@ const contacts = contactChannels();
     </div>
     <div>
       {contacts.map((c) => <p>{c.label}: <a href={c.href}>{c.value}</a></p>)}
-      <p>P.IVA {site.vat} · PEC {site.pec}</p>
+      <p>{site.legalName}<br />Sede legale {site.registeredOffice}</p>
+      <p>P.IVA e C.F. {site.vat}<br />REA {site.rea}<br />Capitale sociale {site.shareCapital}<br />PEC <a href={`mailto:${site.pec}`}>{site.pec}</a></p>
     </div>
     <nav class="links" aria-label="Informazioni legali">
       <a href="/privacy/">Privacy</a>
@@ -29,6 +30,6 @@ const contacts = contactChannels();
   p { margin: 0 0 var(--space-2); }
   .links { display: flex; flex-wrap: wrap; gap: 0 var(--space-6); align-content: start; }
   .links a { min-height: 44px; display: inline-flex; align-items: center; }
-  a { color: var(--on-dark); }
+  a { color: var(--on-dark); overflow-wrap: anywhere; }
   a:hover { color: var(--on-dark-soft); }
 </style>
