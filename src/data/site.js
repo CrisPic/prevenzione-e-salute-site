@@ -9,7 +9,6 @@ export const site = {
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
   email: '',      // TODO
   // Company that runs the site and the bookings (Registro Imprese visura, 27 Oct 2026).
-  // It is also the data controller on the Privacy page. The doctor's identity is kept off the site.
   legalName: 'Prevenzione e Salute S.r.l.s.',
   registeredOffice: 'Via Delio Tessa 1, 20121 Milano (MI)',
   vat: '14915220967', // P.IVA and codice fiscale are the same number
