@@ -18,7 +18,12 @@ import { site } from '../data/site.js';
         {site.medaidBooking.enabled ? (
           <>
             <p>Il titolare del trattamento per le prenotazioni online è {site.legalName}, con sede legale in {site.registeredOffice}. Per richieste relative ai suoi dati può scriverci all'indirizzo <a href={`mailto:${site.pec}`}>{site.pec}</a>.</p>
-            <p>Quando apre il calendario, il suo browser si collega a Medaid Book, fornito da Collaborazioni Digitali S.r.l. Per gestire l'appuntamento e inviarle le comunicazioni di servizio vengono trattati la prestazione e l'orario scelti, il nome, il cognome, l'indirizzo email e il numero di telefono, se lo indica. Non invii informazioni sulla sua salute tramite il modulo.</p>
+            <p>Quando apre il calendario, il suo browser si collega a Medaid Book. Collaborazioni Digitali S.r.l., il fornitore di Medaid Book, tratta i dati della prenotazione per conto dello studio come responsabile del trattamento.</p>
+            <p>Usiamo nome, cognome, indirizzo email, prestazione e orario scelti, e il suo numero di telefono se lo indica, per gestire l'appuntamento e inviarle le comunicazioni di servizio. I dati richiesti dal modulo sono necessari per prenotare online. Non invii informazioni sulla sua salute tramite il modulo.</p>
+            <h3>Conservazione e cancellazione</h3>
+            <p>Conserviamo i dati per gestire la prenotazione e le eventuali richieste o contestazioni relative all'appuntamento. Quando i dati non sono più necessari, chiediamo a Medaid di cancellarli, salvo i casi in cui dobbiamo conservarli per legge.</p>
+            <h3>I suoi diritti</h3>
+            <p>Può scriverci per chiedere di accedere ai suoi dati, correggerli o cancellarli. Nei casi previsti dal GDPR può anche chiederne la limitazione o la portabilità, oppure opporsi al trattamento. Può presentare un reclamo al <a href="https://www.garanteprivacy.it/">Garante per la protezione dei dati personali</a>.</p>
             <p>Per il trattamento effettuato da Medaid sul proprio sito consulti la sua <a href="https://medaid.it/privacy-policy/">informativa privacy</a>.</p>
           </>
         ) : (
