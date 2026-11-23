@@ -1,11 +1,11 @@
 ---
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
+import { medaidBookingEnabled } from '../data/medaid-booking.js';
 import BookingForm from '../components/BookingForm.astro';
 import MedaidBooking from '../components/MedaidBooking.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
-const { medaidBooking } = site;
-const intro = medaidBooking.enabled
+const intro = medaidBookingEnabled
   ? 'Scelga la prestazione e l’orario nel calendario di Medaid.'
   : 'Scelga servizio, giorno e orario. Riceverà una conferma via email.';
 ---
@@ -20,7 +20,7 @@ const intro = medaidBooking.enabled
       </dl>
     </aside>
     <div class="book__form">
-      {medaidBooking.enabled ? <MedaidBooking url={medaidBooking.url} /> : <BookingForm />}
+      {medaidBookingEnabled ? <MedaidBooking url={site.medaidBooking.url} /> : <BookingForm />}
     </div>
   </div>
 
@@ -42,7 +42,7 @@ const intro = medaidBooking.enabled
     <div class="container">
       <div class="sec-head"><h2 id="disdire-h">Disdire o spostare un appuntamento</h2></div>
       <div class="sec-body">
-        <p>Usi il link nell'email di conferma{wa ? ' oppure ci scriva su WhatsApp' : ''}, possibilmente almeno 24 ore prima.</p>
+        <p>Segua le indicazioni nell'email di conferma{wa ? ' oppure ci scriva su WhatsApp' : ''}, possibilmente almeno 24 ore prima.</p>
       </div>
     </div>
   </section>
