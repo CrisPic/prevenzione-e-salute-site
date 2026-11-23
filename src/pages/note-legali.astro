@@ -1,0 +1,75 @@
+---
+import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
+import { medaidBookingEnabled } from '../data/medaid-booking.js';
+// Company-only legal notice. The doctor is deliberately not named (minimal identification).
+// Points marked DA VERIFICARE need a lawyer's check before launch.
+const updated = '23 novembre 2026';
+---
+<Page title="Note legali | Prevenzione e Salute" description="Dati della società che gestisce il sito Prevenzione e Salute e condizioni di utilizzo del sito." heading="Note legali">
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Chi gestisce il sito</h2></div>
+      <div class="sec-body prose">
+        {/* Company data required by art. 7 D.Lgs. 70/2003 and art. 2250 c.c. Values come from site.js. */}
+        <p>Questo sito è gestito da:</p>
+        <p>
+          <strong>{site.legalName}</strong><br />
+          Sede legale: {site.registeredOffice}<br />
+          P.IVA e codice fiscale: {site.vat}<br />
+          Registro delle Imprese di Milano Monza Brianza Lodi, REA {site.rea}<br />
+          Capitale sociale: {site.shareCapital}<br />
+          PEC: <a href={`mailto:${site.pec}`}>{site.pec}</a>
+          {site.email && <><br />Email: <a href={`mailto:${site.email}`}>{site.email}</a></>}
+        </p>
+        {/* DA VERIFICARE: Registro delle Imprese office (Milano Monza Brianza Lodi) inferred from REA prefix MI. */}
+        <p>Lo studio medico si trova {site.venue}, {site.address}.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Prestazioni sanitarie</h2></div>
+      <div class="sec-body prose">
+        {/* DA VERIFICARE: art. 7 D.Lgs. 70/2003 asks regulated professions to state the professional order and
+            registration number. The doctor wants minimal identification, so this page names only the company.
+            Lawyer to confirm whether this is enough when the company (not the doctor) offers the service online,
+            or whether the Ordine dei Medici and registration number must be shown (e.g. without the name). */}
+        <p>Le visite e i certificati sono resi da medici abilitati all'esercizio della professione e iscritti all'Ordine dei Medici Chirurghi e degli Odontoiatri competente. Il medico valuta l'idoneità durante la visita: la prenotazione non garantisce il rilascio del certificato.</p>
+        {/* DA VERIFICARE: VAT treatment of the services (exemption art. 10 DPR 633/1972) not stated on purpose. */}
+        <p>I prezzi indicati sul sito sono quelli applicati in studio al momento della pubblicazione e possono cambiare. Fa fede il prezzo comunicato al momento della prenotazione.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Contenuti del sito</h2></div>
+      <div class="sec-body prose">
+        <p>Le informazioni pubblicate hanno scopo informativo generale e non sostituiscono la visita o il parere di un medico. In caso di urgenza chiami il 112.</p>
+        <p>Curiamo i contenuti con attenzione, ma possono contenere imprecisioni o non essere aggiornati. Per conferme su prestazioni, orari e prezzi ci contatti prima della visita.</p>
+        <p>Testi, grafica e logo del sito appartengono a {site.legalName} o ai rispettivi titolari. Non possono essere copiati o riutilizzati senza autorizzazione, salvo l'uso personale e la citazione con indicazione della fonte.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Servizi e siti di terzi</h2></div>
+      <div class="sec-body prose">
+        {medaidBookingEnabled && <p>Le prenotazioni online sono gestite tramite Medaid Book, servizio di Collaborazioni Digitali S.r.l., che si applica con le proprie condizioni d'uso.</p>}
+        <p>Il sito contiene collegamenti a siti di terzi, come le mappe di Google. Non controlliamo questi siti e non siamo responsabili dei loro contenuti.</p>
+        <p>Il sito è ospitato da Cloudflare. Per il trattamento dei dati personali consulti la pagina <a href="/privacy/">Privacy e cookie</a>.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Legge applicabile</h2></div>
+      <div class="sec-body prose">
+        {/* DA VERIFICARE: no forum clause on purpose (consumers keep their own forum, art. 66-bis Codice del Consumo).
+            The EU ODR platform link is no longer required (platform closed 20 July 2025, Reg. (EU) 2024/3228). */}
+        <p>Queste note e l'uso del sito sono regolati dalla legge italiana. Restano salvi i diritti riconosciuti ai consumatori dalla legge.</p>
+        <p>Ultimo aggiornamento: {updated}.</p>
+      </div>
+    </div>
+  </section>
+</Page>
