@@ -2,9 +2,14 @@
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
 import BookingForm from '../components/BookingForm.astro';
+import MedaidBooking from '../components/MedaidBooking.astro';
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
+const { medaidBooking } = site;
+const intro = medaidBooking.enabled
+  ? 'Scelga la prestazione e l’orario nel calendario di Medaid.'
+  : 'Scelga servizio, giorno e orario. Riceverà una conferma via email.';
 ---
-<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." kicker="Prenotazione online" heading="Prenoti la sua visita" intro="Scelga servizio, giorno e orario. Riceverà una conferma via email.">
+<Page title="Prenota la visita | Prevenzione e Salute – Milano" description="Prenoti online il certificato medico sportivo non agonistico o ludico-motorio (€50) o una visita medica specialistica presso GetFIT, Via Piacenza 4, Milano." kicker="Prenotazione online" heading="Prenoti la sua visita" intro={intro}>
   <div class="book container">
     <aside class="book__facts" aria-labelledby="prima-h">
       <h2 id="prima-h" class="visually-hidden">Prima di prenotare</h2>
@@ -15,7 +20,7 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
       </dl>
     </aside>
     <div class="book__form">
-      <BookingForm />
+      {medaidBooking.enabled ? <MedaidBooking url={medaidBooking.url} /> : <BookingForm />}
     </div>
   </div>
 

@@ -17,6 +17,11 @@ export const site = {
   pec: 'prevenzioneesalutesrls@tutelapec.it',
   hours: '',      // TODO opening hours, e.g. 'Lun–Ven 9–19'; hidden on the site while empty
   certificatePrice: 50,
+  medaidBooking: {
+    // Enable after the public booking page and the privacy notice have been verified.
+    enabled: false,
+    url: 'https://medaid.it/professionista/prevenzione-e-salute/prenota/',
+  },
   showEnglish: false, // set to true once the English pages exist
   // false = every page gets <meta name="robots" content="noindex">.
   // Flip to true once the domain is live and the placeholders (phone, P.IVA, hours) are filled.
