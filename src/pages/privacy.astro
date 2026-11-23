@@ -1,5 +1,6 @@
 ---
 import Page from '../layouts/Page.astro';
+import { site } from '../data/site.js';
 ---
 <Page title="Privacy e cookie | Prevenzione e Salute" description="Informativa privacy e cookie policy di Prevenzione e Salute, studio medico presso GetFIT a Milano. Il sito non usa cookie di profilazione." heading="Privacy e cookie">
   <section class="sec">
@@ -14,8 +15,18 @@ import Page from '../layouts/Page.astro';
     <div class="container">
       <div class="sec-head"><h2>Prenotazioni online</h2></div>
       <div class="sec-body prose">
-        <p>Per prenotare chiediamo solo nome e cognome, telefono, email, servizio e orario scelti. Non inserisca informazioni sulla sua salute. I dati servono solo a gestire l'appuntamento e a inviarle la conferma.</p>
-        <p>Il modulo di prenotazione invia i dati al nostro server, che registra l'appuntamento nel calendario dello studio gestito con il servizio Cal.com. Il suo browser non si collega a servizi esterni e non vengono usati cookie.</p>
+        {site.medaidBooking.enabled ? (
+          <>
+            <p>Il titolare del trattamento per le prenotazioni online è {site.legalName}, con sede legale in {site.registeredOffice}. Per richieste relative ai suoi dati può scriverci all'indirizzo <a href={`mailto:${site.pec}`}>{site.pec}</a>.</p>
+            <p>Quando apre il calendario, il suo browser si collega a Medaid Book, fornito da Collaborazioni Digitali S.r.l. Per gestire l'appuntamento e inviarle le comunicazioni di servizio vengono trattati la prestazione e l'orario scelti, il nome, il cognome, l'indirizzo email e il numero di telefono, se lo indica. Non invii informazioni sulla sua salute tramite il modulo.</p>
+            <p>Per il trattamento effettuato da Medaid sul proprio sito consulti la sua <a href="https://medaid.it/privacy-policy/">informativa privacy</a>.</p>
+          </>
+        ) : (
+          <>
+            <p>Per prenotare chiediamo solo nome e cognome, telefono, email, servizio e orario scelti. Non inserisca informazioni sulla sua salute. I dati servono solo a gestire l'appuntamento e a inviarle la conferma.</p>
+            <p>Il modulo di prenotazione invia i dati al nostro server, che registra l'appuntamento nel calendario dello studio gestito con il servizio Cal.com. Il suo browser non si collega a servizi esterni e non vengono usati cookie.</p>
+          </>
+        )}
       </div>
     </div>
   </section>
@@ -24,6 +35,7 @@ import Page from '../layouts/Page.astro';
       <div class="sec-head"><h2>Cookie</h2></div>
       <div class="sec-body prose">
         <p>Questo sito non utilizza cookie di profilazione né strumenti di analisi che tracciano gli utenti.</p>
+        {site.medaidBooking.enabled && <p>Il calendario di Medaid viene caricato solo quando lo apre. Per informazioni sui cookie di Medaid consulti la sua <a href="https://medaid.it/cookie-policy/">informativa sui cookie</a>.</p>}
       </div>
     </div>
   </section>
