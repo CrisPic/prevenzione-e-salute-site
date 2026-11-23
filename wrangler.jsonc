@@ -12,7 +12,7 @@
   },
   "vars": {
     // "off" | "mock" (demo, nothing saved) | "calcom" (needs secret CALCOM_API_KEY: npx wrangler secret put CALCOM_API_KEY)
-    "BOOKING_MODE": "calcom"
+    "BOOKING_MODE": "off"
   },
   // Branch builds (`wrangler preview`) use these instead of "vars": demo booking only,
   // so a preview never reads the Cal.com secret or creates real appointments.

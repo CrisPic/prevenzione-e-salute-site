@@ -14,7 +14,12 @@ const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
 ---
 <div class="bk" data-bk data-tz={tz} data-fallback={fallback}>
   <div data-bk-fallback>
-    <InfoCallout><p>Il calendario di prenotazione online non è disponibile in questo momento. {channels ? `Può prenotare ${channels}.` : 'Riprovi più tardi.'}</p></InfoCallout>
+    <InfoCallout>
+      <p>Il calendario di prenotazione online non è disponibile in questo momento.</p>
+      {channels ? <p>Può prenotare {channels}.</p> : (
+        <p>Per informazioni può scrivere alla nostra PEC <a href={`mailto:${site.pec}`}>{site.pec}</a>. Non invii dati sulla salute.</p>
+      )}
+    </InfoCallout>
   </div>
 
   <!-- Shown while JS loads the calendar (only when JS runs; without JS the fallback above stays) -->
