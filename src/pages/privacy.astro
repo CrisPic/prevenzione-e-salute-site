@@ -8,7 +8,7 @@ import { medaidBookingEnabled } from '../data/medaid-booking.js';
     <div class="container">
       <div class="sec-head"><h2>Titolare del trattamento</h2></div>
       <div class="sec-body prose">
-        <p>Il titolare del trattamento per il sito, i contatti e le prenotazioni è {site.legalName}, con sede legale in {site.registeredOffice}. Per richieste relative ai suoi dati può scriverci all'indirizzo <a href={`mailto:${site.pec}`}>{site.pec}</a>.</p>
+        <p>Il titolare del trattamento per il sito, i contatti e le prenotazioni è {site.legalName}, con sede legale in {site.registeredOffice}. Per richieste relative ai suoi dati può scriverci all'indirizzo {site.email && <><a href={`mailto:${site.email}`}>{site.email}</a> oppure alla PEC </>}<a href={`mailto:${site.pec}`}>{site.pec}</a>.</p>
         <h3>Navigazione</h3>
         <p>Il sito è ospitato da Cloudflare. Per erogare il sito e proteggerlo da abusi trattiamo dati tecnici come l'indirizzo IP e le informazioni sulla richiesta. La base giuridica è il nostro legittimo interesse a far funzionare il sito in sicurezza (art. 6, par. 1, lett. f, GDPR). I dati tecnici sono conservati per il tempo necessario al funzionamento e alla gestione di eventuali problemi di sicurezza.</p>
         <h3>Contatti</h3>
