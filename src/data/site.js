@@ -16,7 +16,7 @@ export const site = {
   // site and left out of the structured data; filling it in shows it everywhere at once.
   phone: '',      // TODO once the number is bought, e.g. '+39 02 1234 5678'
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
-  email: '',      // TODO once info@prevenzioneesalute.it exists in Aruba and receives mail
+  email: 'info@prevenzioneesalute.it',
   // Company that runs the site and the bookings (Registro Imprese visura, 27 Oct 2026).
   legalName: 'Prevenzione e Salute S.r.l.s.',
   registeredOffice: 'Via Delio Tessa 1, 20121 Milano (MI)',
