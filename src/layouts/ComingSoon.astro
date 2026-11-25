@@ -4,7 +4,8 @@ import { site } from '../data/site.js';
 const { t, lang } = Astro.props;
 const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : '';
 ---
-<Base title={t.title} description={t.description} lang={lang}>
+<!-- The EN placeholder stays out of search results until the English pages exist -->
+<Base title={t.title} description={t.description} lang={lang} noindex={!site.showEnglish}>
   <main id="main" tabindex="-1" class="wrap">
     <nav class="lang"><a href="/" aria-current={lang === 'it'}>IT</a> · <a href="/en/" aria-current={lang === 'en'}>EN</a></nav>
     <p class="logo"><img src="/favicon.svg" alt="" width="40" height="40" /> {site.name}</p>
