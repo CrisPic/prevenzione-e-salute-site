@@ -1,3 +1,10 @@
+// Opening hours. Feeds both the text on the site and the structured data for Google.
+// days use schema.org names (Monday..Sunday); label is what visitors read.
+const openingHours = [
+  { label: 'Lun–Ven', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '11:00', closes: '18:00' },
+  { label: 'Sab', days: ['Saturday'], opens: '11:00', closes: '14:00' },
+];
+
 // Single source of truth for practical info. Change it here, it updates everywhere.
 export const site = {
   name: 'Prevenzione e Salute',
@@ -5,9 +12,11 @@ export const site = {
   venue: 'presso GetFIT, primo piano',
   venueEn: 'inside GetFIT – first floor',
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=GetFIT+Via+Piacenza+4+Milano',
-  phone: '',      // TODO
+  // Contact channels: leave empty until they really work. An empty field is hidden on the
+  // site and left out of the structured data; filling it in shows it everywhere at once.
+  phone: '',      // TODO once the number is bought, e.g. '+39 02 1234 5678'
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
-  email: '',      // TODO
+  email: '',      // TODO once info@prevenzioneesalute.it exists in Aruba and receives mail
   // Company that runs the site and the bookings (Registro Imprese visura, 27 Oct 2026).
   legalName: 'Prevenzione e Salute S.r.l.s.',
   registeredOffice: 'Via Delio Tessa 1, 20121 Milano (MI)',
@@ -15,7 +24,8 @@ export const site = {
   rea: 'MI-2814915',
   shareCapital: '€ 1.000 i.v.',
   pec: 'prevenzioneesalutesrls@tutelapec.it',
-  hours: '',      // TODO opening hours, e.g. 'Lun–Ven 9–19'; hidden on the site while empty
+  openingHours,
+  hours: openingHours.map((h) => `${h.label} ${h.opens}–${h.closes}`).join(' · '),
   certificatePrice: 50,
   medaidBooking: {
     enabled: true,
@@ -23,7 +33,7 @@ export const site = {
   },
   showEnglish: false, // set to true once the English pages exist
   // false = every page gets <meta name="robots" content="noindex">.
-  // Flip to true once the domain is live and the placeholders (phone, P.IVA, hours) are filled.
+  // Flip to true once phone and email are filled in and work.
   indexable: false,
 };
 
@@ -82,7 +92,7 @@ export const clinicSchema = (siteUrl) => {
     name: site.name,
     url: new URL('/', siteUrl).href,
     image: new URL('/og-image.png', siteUrl).href,
-    logo: new URL('/favicon.svg', siteUrl).href,
+    logo: new URL('/logo.png', siteUrl).href, // Google needs a raster logo, not SVG
     description: 'Studio medico presso GetFIT a Milano: certificato medico per attività sportiva non agonistica, certificato per attività ludico-motoria, visite mediche specialistiche.',
     address: {
       '@type': 'PostalAddress',
@@ -93,6 +103,12 @@ export const clinicSchema = (siteUrl) => {
       addressCountry: 'IT',
     },
     hasMap: site.mapsUrl,
+    openingHoursSpecification: site.openingHours.map((h) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: h.days,
+      opens: h.opens,
+      closes: h.closes,
+    })),
     priceRange: `€${site.certificatePrice}`,
     makesOffer: [
       { '@type': 'Offer', name: 'Certificato medico per attività sportiva non agonistica', price: site.certificatePrice, priceCurrency: 'EUR' },
