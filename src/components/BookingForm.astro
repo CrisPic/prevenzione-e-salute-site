@@ -7,7 +7,7 @@ import InfoCallout from './InfoCallout.astro';
 import Icon from './Icon.astro';
 import { site } from '../data/site.js';
 const tz = booking.timeZone;
-const bookable = booking.services.filter((s) => s.eventTypeId); // services without a calendar event are not offered
+const bookable = booking.services;
 // Name only the channels that really exist; with none configured the messages just ask to retry
 const channels = [site.whatsapp && 'su WhatsApp', site.phone && 'per telefono'].filter(Boolean).join(' o ');
 const fallback = channels ? ` In alternativa ci contatti ${channels}.` : '';
