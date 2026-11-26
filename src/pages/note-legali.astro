@@ -2,17 +2,38 @@
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
 import { medaidBookingEnabled } from '../data/medaid-booking.js';
-// Company-only legal notice. The doctor is deliberately not named (minimal identification).
-// Points marked DA VERIFICARE need a lawyer's check before launch.
-const updated = '25 novembre 2026';
+// Art. 7 D.Lgs. 70/2003: the provider of the bookable visits is the doctor, so he is
+// identified here (name, title, Ordine, number). Reviewed with the lawyers on 26 Nov 2026.
+// noindex: the doctor's name stays out of search results; the page is linked from every footer.
+const { doctor } = site;
+const updated = '26 novembre 2026';
 ---
-<Page title="Note legali | Prevenzione e Salute" description="Dati della società che gestisce il sito Prevenzione e Salute e condizioni di utilizzo del sito." heading="Note legali">
+<Page noindex title="Note legali | Prevenzione e Salute" description="Chi eroga le prestazioni dello studio e chi gestisce il sito Prevenzione e Salute." heading="Note legali">
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Chi eroga le prestazioni</h2></div>
+      <div class="sec-body prose">
+        <p>Le visite e i certificati sono resi dal medico titolare dello studio:</p>
+        <p>
+          <strong>{doctor.name}</strong><br />
+          {doctor.title}<br />
+          Iscritto all'{doctor.order}, n. {doctor.registration}<br />
+          Titolo professionale conseguito in {doctor.titleCountry}<br />
+          P.IVA {doctor.vat}<br />
+          Studio: {site.address}, {site.venue}<br />
+          {doctor.pec && <>PEC: <a href={`mailto:${doctor.pec}`}>{doctor.pec}</a><br /></>}
+          Email: <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+        <p>Il medico è tenuto al rispetto del <a href="https://portale.fnomceo.it/codice-deontologico/">Codice di deontologia medica</a> della FNOMCeO. Valuta l'idoneità durante la visita: la prenotazione non garantisce il rilascio del certificato.</p>
+        <p>I prezzi indicati sul sito sono quelli applicati in studio al momento della pubblicazione e possono cambiare. Fa fede il prezzo comunicato al momento della prenotazione. Le prestazioni sono pagate in studio al medico.</p>
+      </div>
+    </div>
+  </section>
   <section class="sec">
     <div class="container">
       <div class="sec-head"><h2>Chi gestisce il sito</h2></div>
       <div class="sec-body prose">
-        {/* Company data required by art. 7 D.Lgs. 70/2003 and art. 2250 c.c. Values come from site.js. */}
-        <p>Questo sito è gestito da:</p>
+        <p>Il sito è realizzato e gestito per conto del medico da:</p>
         <p>
           <strong>{site.legalName}</strong><br />
           Sede legale: {site.registeredOffice}<br />
@@ -20,24 +41,8 @@ const updated = '25 novembre 2026';
           Registro delle Imprese di Milano Monza Brianza Lodi, REA {site.rea}<br />
           Capitale sociale: {site.shareCapital}<br />
           PEC: <a href={`mailto:${site.pec}`}>{site.pec}</a>
-          {site.email && <><br />Email: <a href={`mailto:${site.email}`}>{site.email}</a></>}
         </p>
-        {/* DA VERIFICARE: Registro delle Imprese office (Milano Monza Brianza Lodi) inferred from REA prefix MI. */}
-        <p>Lo studio medico si trova {site.venue}, {site.address}.</p>
-      </div>
-    </div>
-  </section>
-  <section class="sec">
-    <div class="container">
-      <div class="sec-head"><h2>Prestazioni sanitarie</h2></div>
-      <div class="sec-body prose">
-        {/* DA VERIFICARE: art. 7 D.Lgs. 70/2003 asks regulated professions to state the professional order and
-            registration number. The doctor wants minimal identification, so this page names only the company.
-            Lawyer to confirm whether this is enough when the company (not the doctor) offers the service online,
-            or whether the Ordine dei Medici and registration number must be shown (e.g. without the name). */}
-        <p>Le visite e i certificati sono resi da medici abilitati all'esercizio della professione e iscritti all'Ordine dei Medici Chirurghi e degli Odontoiatri competente. Il medico valuta l'idoneità durante la visita: la prenotazione non garantisce il rilascio del certificato.</p>
-        {/* DA VERIFICARE: VAT treatment of the services (exemption art. 10 DPR 633/1972) not stated on purpose. */}
-        <p>I prezzi indicati sul sito sono quelli applicati in studio al momento della pubblicazione e possono cambiare. Fa fede il prezzo comunicato al momento della prenotazione.</p>
+        <p>La società fornisce al medico servizi tecnici e di consulenza e tratta i dati personali per suo conto, come responsabile del trattamento (art. 28 GDPR). Non eroga prestazioni sanitarie e non incassa i compensi delle visite. Dettagli nella pagina <a href="/privacy/">Privacy e cookie</a>.</p>
       </div>
     </div>
   </section>
@@ -57,7 +62,6 @@ const updated = '25 novembre 2026';
       <div class="sec-body prose">
         {medaidBookingEnabled && <p>Le prenotazioni online sono gestite tramite Medaid Book, servizio di Collaborazioni Digitali S.r.l., che si applica con le proprie condizioni d'uso.</p>}
         <p>Il sito contiene collegamenti a siti di terzi, come le mappe di Google. Non controlliamo questi siti e non siamo responsabili dei loro contenuti.</p>
-        <p>Il sito è ospitato da Cloudflare. Per il trattamento dei dati personali consulti la pagina <a href="/privacy/">Privacy e cookie</a>.</p>
       </div>
     </div>
   </section>
@@ -65,8 +69,8 @@ const updated = '25 novembre 2026';
     <div class="container">
       <div class="sec-head"><h2>Legge applicabile</h2></div>
       <div class="sec-body prose">
-        {/* DA VERIFICARE: no forum clause on purpose (consumers keep their own forum, art. 66-bis Codice del Consumo).
-            The EU ODR platform link is no longer required (platform closed 20 July 2025, Reg. (EU) 2024/3228). */}
+        {/* No forum clause on purpose (consumers keep their own forum); confirmed by the lawyers.
+            The EU ODR platform link is no longer required (platform closed 20 July 2025). */}
         <p>Queste note e l'uso del sito sono regolati dalla legge italiana. Restano salvi i diritti riconosciuti ai consumatori dalla legge.</p>
         <p>Ultimo aggiornamento: {updated}.</p>
       </div>

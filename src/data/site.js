@@ -17,7 +17,21 @@ export const site = {
   phone: '',      // TODO once the number is bought, e.g. '+39 02 1234 5678'
   whatsapp: '',   // TODO, international format without + e.g. 393331234567
   email: 'info@prevenzioneesalute.it',
-  // Company that runs the site and the bookings (Registro Imprese visura, 27 Oct 2026).
+  // The doctor who runs the studio and provides the visits. He is the data controller for
+  // patients and bookings; the company below only runs the site for him (art. 28 GDPR).
+  // Shown only on Note legali and Privacy (both noindex), as art. 7 D.Lgs. 70/2003 requires.
+  // Keep it out of Home, titles and structured data: the doctor wants a low profile.
+  doctor: {
+    name: 'Dott. Gesuele Catalfamo',
+    title: 'Medico chirurgo, specialista in Anestesia e Rianimazione',
+    titleCountry: 'Italia', // TODO confirm with the doctor (art. 7 lett. f n. 2)
+    order: "Ordine dei Medici Chirurghi e degli Odontoiatri della provincia di Reggio Calabria",
+    registration: '4978',
+    vat: '11130000968',
+    pec: '', // TODO doctor's own PEC; until then requests go to info@ and the company PEC
+  },
+  // Company that builds and runs the site and the bookings for the doctor
+  // (Registro Imprese visura, 27 Oct 2026).
   legalName: 'Prevenzione e Salute S.r.l.s.',
   registeredOffice: 'Via Delio Tessa 1, 20121 Milano (MI)',
   vat: '14915220967', // P.IVA and codice fiscale are the same number
