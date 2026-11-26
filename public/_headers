@@ -9,3 +9,12 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://medaid.it; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+
+# Second guard on top of the meta tag: the legal pages name the doctor and must never be indexed;
+# /en/ is a placeholder until the English pages exist.
+/privacy/*
+  X-Robots-Tag: noindex
+/note-legali/*
+  X-Robots-Tag: noindex
+/en/*
+  X-Robots-Tag: noindex
