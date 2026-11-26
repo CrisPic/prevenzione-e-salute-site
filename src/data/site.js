@@ -1,7 +1,7 @@
 // Opening hours. Feeds both the text on the site and the structured data for Google.
 // days use schema.org names (Monday..Sunday); label is what visitors read.
 const openingHours = [
-  { label: 'Lun–Ven', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '11:00', closes: '18:00' },
+  { label: 'Lun–Ven', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '11:00', closes: '18:30' },
   { label: 'Sab', days: ['Saturday'], opens: '11:00', closes: '14:00' },
 ];
 
@@ -37,20 +37,18 @@ export const site = {
   indexable: false,
 };
 
-// Online booking (Prenota page + Worker API in worker/index.js).
-// The engine is picked by the Worker variable BOOKING_MODE in wrangler.jsonc:
-//   "off"    -> form hidden, WhatsApp/phone fallback shown
-//   "mock"   -> demo slots, nothing is saved (a "demo" notice is shown)
-//   "calcom" -> real slots/bookings via the Cal.com API (needs secret CALCOM_API_KEY
-//               and an eventTypeId for each service below)
+// Site's own booking form (worker/index.js). Production uses Medaid (site.medaidBooking),
+// so this form only appears on branch previews, where BOOKING_MODE in wrangler.jsonc is:
+//   "off"  -> form hidden, contact fallback shown
+//   "mock" -> demo slots, nothing is saved (a "demo" notice is shown)
 export const booking = {
   timeZone: 'Europe/Rome',
   daysAhead: 21,     // how far ahead patients can book
   minNoticeHours: 2, // no slots sooner than this
   services: [
-    { id: 'certificato', label: 'Certificato medico per attività sportiva non agonistica', short: 'Certificato non agonistico', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7889004 },
-    { id: 'ludico', label: 'Certificato medico per attività ludico-motoria', short: 'Certificato ludico-motorio', price: `€${site.certificatePrice}`, minutes: 10, eventTypeId: 7933000 },
-    { id: 'specialistica', label: 'Visita medica specialistica', short: 'Visita specialistica', price: 'Su richiesta', minutes: 10, eventTypeId: 7933007 },
+    { id: 'certificato', label: 'Certificato medico per attività sportiva non agonistica', short: 'Certificato non agonistico', price: `€${site.certificatePrice}`, minutes: 10 },
+    { id: 'ludico', label: 'Certificato medico per attività ludico-motoria', short: 'Certificato ludico-motorio', price: `€${site.certificatePrice}`, minutes: 10 },
+    { id: 'specialistica', label: 'Visita medica specialistica', short: 'Visita specialistica', price: 'Su richiesta', minutes: 10 },
   ],
   // Demo engine only: opening hours used to generate fake slots (0 = Sunday)
   mockHours: { days: [1, 2, 3, 4, 5, 6], ranges: [['09:00', '13:00'], ['15:00', '19:00']] },

@@ -1,0 +1,11 @@
+# Security headers for every page and file served from static assets (Cloudflare Workers).
+# HSTS has no includeSubDomains on purpose: mail hosts on Aruba (webmail, autodiscover) stay unaffected.
+# CSP: everything from this site; the only third party is the Medaid calendar iframe on /prenota/.
+# 'unsafe-inline' for scripts covers Astro's small inline scripts, JSON-LD and the speculation rules.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://medaid.it; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests

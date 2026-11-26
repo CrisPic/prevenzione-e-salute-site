@@ -4,12 +4,15 @@
 //   GET  /api/booking/slots?service=certificato  -> free slots for the next days
 //   POST /api/booking                              -> create an appointment
 //
-// The visitor's browser only talks to this site; the booking engine (Cal.com)
-// is called server-side, so no third-party script or cookie reaches the visitor.
+// Production booking runs on Medaid (embedded on /prenota/), so this API is off there.
+// Branch previews set BOOKING_MODE=mock to demo the site's own form without saving anything.
 import { booking } from '../src/data/site.js';
 import * as mock from './engines/mock.js';
-import * as calcom from './engines/calcom.js';
-import { EngineError } from './engines/calcom.js';
+
+// Thrown by an engine with a short code that is safe to log (never provider text or personal data).
+class EngineError extends Error {
+  constructor(code, status) { super(code); this.name = 'EngineError'; this.code = code; this.status = status; }
+}
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -19,11 +22,10 @@ const json = (data, status = 200) =>
 
 const engineFor = (env) => {
   if (env.BOOKING_MODE === 'mock') return mock;
-  if (env.BOOKING_MODE === 'calcom' && env.CALCOM_API_KEY) return calcom;
   return null; // "off" or misconfigured
 };
 
-const findService = (id) => booking.services.find((s) => s.id === id && s.eventTypeId);
+const findService = (id) => booking.services.find((s) => s.id === id);
 
 export default {
   async fetch(request, env) {
@@ -31,8 +33,7 @@ export default {
     if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(request);
 
     const engine = engineFor(env);
-    // Diagnostic only (no secret values): which mode is set and whether the API key is present
-    if (!engine) return json({ ok: false, error: 'disabled', mode: env.BOOKING_MODE || null, hasKey: Boolean(env.CALCOM_API_KEY) }, 503);
+    if (!engine) return json({ ok: false, error: 'disabled' }, 503);
 
     try {
       if (url.pathname === '/api/booking/slots' && request.method === 'GET') {
@@ -47,7 +48,7 @@ export default {
         const origin = request.headers.get('origin');
         if (origin !== url.origin) return json({ ok: false, error: 'forbidden' }, 403);
 
-        // Per-client limit before anything reaches Cal.com. Active only when the
+        // Per-client limit before anything reaches the engine. Active only when the
         // BOOKING_RATE_LIMIT binding exists in wrangler.jsonc (Cloudflare rate limiting).
         if (env.BOOKING_RATE_LIMIT) {
           const key = request.headers.get('cf-connecting-ip') || 'unknown';
