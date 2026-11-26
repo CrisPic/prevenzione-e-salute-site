@@ -1,7 +1,7 @@
 // Opening hours. Feeds both the text on the site and the structured data for Google.
 // days use schema.org names (Monday..Sunday); label is what visitors read.
 const openingHours = [
-  { label: 'Lun–Ven', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '11:00', closes: '18:00' },
+  { label: 'Lun–Ven', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '11:00', closes: '18:30' },
   { label: 'Sab', days: ['Saturday'], opens: '11:00', closes: '14:00' },
 ];
 
