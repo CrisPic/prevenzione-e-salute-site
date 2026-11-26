@@ -46,9 +46,10 @@ export const site = {
     url: 'https://medaid.it/professionista/prevenzione-e-salute/prenota/',
   },
   showEnglish: false, // set to true once the English pages exist
-  // false = every page gets <meta name="robots" content="noindex">.
-  // Flip to true once phone and email are filled in and work.
-  indexable: false,
+  // true = search engines may index the site (pages marked noindex stay out).
+  // Cloudflare Workers Builds sets WORKERS_CI_BRANCH at build time: branch previews
+  // get noindex everywhere, so only the production build (main) is indexable.
+  indexable: [undefined, 'main'].includes(globalThis.process?.env?.WORKERS_CI_BRANCH),
 };
 
 // Site's own booking form (worker/index.js). Production uses Medaid (site.medaidBooking),
