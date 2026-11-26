@@ -2,17 +2,33 @@
 import Page from '../layouts/Page.astro';
 import { site } from '../data/site.js';
 import { medaidBookingEnabled } from '../data/medaid-booking.js';
+// Controller = the doctor; the company is his processor (art. 28 GDPR), Medaid a sub-processor.
+// Reviewed with the lawyers on 26 Nov 2026 (rev. 2). noindex: the page names the doctor.
+const { doctor } = site;
+const updated = '26 novembre 2026';
+const requestsTo = doctor.pec
+  ? `alla PEC del medico ${doctor.pec}`
+  : null;
 ---
-<Page title="Privacy e cookie | Prevenzione e Salute" description="Informativa sul trattamento dei dati per il sito, i contatti e le prenotazioni di Prevenzione e Salute." heading="Privacy e cookie">
+<Page noindex title="Privacy e cookie | Prevenzione e Salute" description="Informativa sul trattamento dei dati per il sito, i contatti e le prenotazioni dello studio." heading="Privacy e cookie">
   <section class="sec">
     <div class="container">
       <div class="sec-head"><h2>Titolare del trattamento</h2></div>
       <div class="sec-body prose">
-        <p>Il titolare del trattamento per il sito, i contatti e le prenotazioni è {site.legalName}, con sede legale in {site.registeredOffice}. Per richieste relative ai suoi dati può scriverci all'indirizzo {site.email && <><a href={`mailto:${site.email}`}>{site.email}</a> oppure alla PEC </>}<a href={`mailto:${site.pec}`}>{site.pec}</a>.</p>
+        <p>Il titolare del trattamento dei dati raccolti tramite il sito, i contatti e le prenotazioni è il {doctor.name}, {doctor.title.charAt(0).toLowerCase() + doctor.title.slice(1)}, con studio in {site.address} ({site.venue}).</p>
+        <p>{site.legalName}, con sede legale in {site.registeredOffice}, realizza e gestisce il sito, la casella {site.email} e il sistema di prenotazione per conto del medico, come responsabile del trattamento (art. 28 GDPR). Non usa i dati per scopi propri.</p>
+        <p>Per qualsiasi richiesta sui suoi dati può scrivere a <a href={`mailto:${site.email}`}>{site.email}</a>{requestsTo ? <>, {requestsTo}</> : null} oppure alla PEC <a href={`mailto:${site.pec}`}>{site.pec}</a>. Queste caselle sono gestite per conto del medico e le richieste gli vengono inoltrate entro 3 giorni lavorativi.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="container">
+      <div class="sec-head"><h2>Quali dati e perché</h2></div>
+      <div class="sec-body prose">
         <h3>Navigazione</h3>
-        <p>Il sito è ospitato da Cloudflare. Per erogare il sito e proteggerlo da abusi trattiamo dati tecnici come l'indirizzo IP e le informazioni sulla richiesta. La base giuridica è il nostro legittimo interesse a far funzionare il sito in sicurezza (art. 6, par. 1, lett. f, GDPR). I dati tecnici sono conservati per il tempo necessario al funzionamento e alla gestione di eventuali problemi di sicurezza.</p>
+        <p>Il sito è ospitato da Cloudflare. Per mostrare le pagine e proteggerle da abusi vengono trattati dati tecnici come l'indirizzo IP e le informazioni sulla richiesta. La base giuridica è il legittimo interesse a far funzionare il sito in sicurezza (art. 6, par. 1, lett. f, GDPR).</p>
         <h3>Contatti</h3>
-        <p>Se ci contatta, trattiamo i suoi recapiti e il contenuto del messaggio per risponderle. Per le richieste relative a un appuntamento la base giuridica è l'art. 6, par. 1, lett. b, GDPR. Per le richieste generali la base è il nostro legittimo interesse a risponderle (art. 6, par. 1, lett. f, GDPR). Conserviamo i messaggi per il tempo necessario a gestire la richiesta, fatte salve eventuali necessità di legge o di tutela dei diritti.</p>
+        <p>Se scrive allo studio, trattiamo i suoi recapiti e il contenuto del messaggio per risponderle. Per le richieste relative a un appuntamento la base giuridica è l'art. 6, par. 1, lett. b, GDPR; per le richieste generali è il legittimo interesse a risponderle (art. 6, par. 1, lett. f, GDPR). Non invii informazioni sulla sua salute per email, salvo che sia il medico a chiederglielo.</p>
       </div>
     </div>
   </section>
@@ -22,12 +38,10 @@ import { medaidBookingEnabled } from '../data/medaid-booking.js';
       <div class="sec-body prose">
         {medaidBookingEnabled ? (
           <>
-            <p>Quando apre il calendario, il suo browser si collega a Medaid Book. Collaborazioni Digitali S.r.l., il fornitore di Medaid Book, tratta i dati della prenotazione per conto dello studio come responsabile del trattamento.</p>
-            <p>Usiamo nome, cognome, indirizzo email, prestazione e orario scelti, e il suo numero di telefono se lo indica, per gestire l'appuntamento e inviarle le comunicazioni di servizio. I dati richiesti dal modulo sono necessari per prenotare online. Non invii informazioni sulla sua salute tramite il modulo.</p>
-            <p>Trattiamo questi dati per gestire la prestazione che ci ha richiesto (art. 6, par. 1, lett. b, GDPR). Quando i dati della prenotazione riguardano la salute, li trattiamo nella misura necessaria per organizzare la prestazione sanitaria, sotto la responsabilità del medico, soggetto al segreto professionale (art. 9, par. 2, lett. h, e par. 3, GDPR).</p>
-            <h3>Conservazione e cancellazione</h3>
-            <p>Conserviamo i dati per gestire la prenotazione e le eventuali richieste o contestazioni relative all'appuntamento. Quando i dati non sono più necessari, chiediamo a Medaid di cancellarli, salvo i casi in cui dobbiamo conservarli per legge.</p>
-            <p>Per il trattamento effettuato da Medaid sul proprio sito consulti la sua <a href="https://medaid.it/privacy-policy/">informativa privacy</a>.</p>
+            <p>Le prenotazioni passano dal calendario di Medaid Book. Quando lo apre, il suo browser si collega a Medaid. Collaborazioni Digitali S.r.l., il fornitore di Medaid Book, tratta i dati della prenotazione come sub-responsabile (art. 28 GDPR), su server in Italia e Germania.</p>
+            <p>Usiamo nome, cognome, indirizzo email, prestazione e orario scelti, e il suo numero di telefono se lo indica, per gestire l'appuntamento e inviarle conferme e promemoria. Questi dati sono necessari per prenotare online. Non inserisca nel modulo informazioni sulla sua salute: le chiederà il medico durante la visita.</p>
+            <p>La base giuridica è l'esecuzione della prestazione che ha richiesto (art. 6, par. 1, lett. b, GDPR). Poiché il tipo di visita può rivelare informazioni sulla salute, questi dati sono trattati anche ai sensi dell'art. 9, par. 2, lett. h, e par. 3, GDPR e degli artt. 2-septies e 75 del Codice privacy, sotto la responsabilità del medico, tenuto al segreto professionale. Per prenotare non le chiediamo alcun consenso.</p>
+            <p>Per il trattamento che Medaid svolge sul proprio sito consulti la sua <a href="https://medaid.it/privacy-policy/">informativa privacy</a>.</p>
           </>
         ) : (
           <p>Le prenotazioni online non sono disponibili su questa versione del sito.</p>
@@ -35,11 +49,43 @@ import { medaidBookingEnabled } from '../data/medaid-booking.js';
       </div>
     </div>
   </section>
+  <section class="sec" id="destinatari">
+    <div class="container">
+      <div class="sec-head"><h2>Chi riceve i dati</h2></div>
+      <div class="sec-body prose">
+        <p>I dati non sono diffusi. Possono accedervi il medico, il personale autorizzato e vincolato alla riservatezza, e i fornitori che li trattano per conto del medico:</p>
+        <ul>
+          <li>{site.legalName}: gestione tecnica del sito, della posta e delle prenotazioni;</li>
+          {medaidBookingEnabled && <li>Collaborazioni Digitali S.r.l. (Medaid Book): sistema di prenotazione, server in Italia e Germania;</li>}
+          <li>Cloudflare: hosting e sicurezza del sito;</li>
+          <li>Aruba S.p.A.: posta elettronica, in Italia.</li>
+        </ul>
+        <p>I dati possono essere comunicati ad autorità pubbliche e consulenti contabili solo nei casi previsti dalla legge.</p>
+        <h3>Trasferimenti fuori dall'Unione europea</h3>
+        <p>Cloudflare, Inc. è una società statunitense: i dati tecnici di navigazione possono transitare negli Stati Uniti.{medaidBookingEnabled && ' Quando apre il calendario di Medaid, il suo browser scarica anche i caratteri tipografici da Google LLC (Stati Uniti), che riceve il suo indirizzo IP.'} Questi trasferimenti si basano sulla decisione di adeguatezza della Commissione europea per il Data Privacy Framework UE-USA (art. 45 GDPR). I dati delle prenotazioni restano su server in Italia e Germania.</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec" id="conservazione">
+    <div class="container">
+      <div class="sec-head"><h2>Per quanto tempo</h2></div>
+      <div class="sec-body prose">
+        <ul>
+          <li>Dati tecnici di navigazione e di sicurezza: al massimo 12 mesi.</li>
+          <li>Messaggi di contatto: 12 mesi.</li>
+          <li>Prenotazioni non seguite da visita: 12 mesi dalla data dell'appuntamento.</li>
+          <li>Prenotazioni seguite da visita e documentazione sanitaria: 10 anni dalla prestazione; per i pazienti minorenni, 10 anni dal compimento dei 18 anni.</li>
+          <li>Documenti contabili: 10 anni.</li>
+        </ul>
+        <p>Scaduti i termini, i dati sono cancellati o resi anonimi. Possono essere conservati più a lungo solo se servono a far valere o difendere un diritto in giudizio.</p>
+      </div>
+    </div>
+  </section>
   <section class="sec" id="diritti">
     <div class="container">
       <div class="sec-head"><h2>I suoi diritti</h2></div>
       <div class="sec-body prose">
-        <p>Può scriverci per chiedere di accedere ai suoi dati, correggerli o cancellarli. Nei casi previsti dal GDPR può anche chiederne la limitazione o la portabilità, oppure opporsi al trattamento. Può presentare un reclamo al <a href="https://www.garanteprivacy.it/">Garante per la protezione dei dati personali</a>.</p>
+        <p>Può chiedere di accedere ai suoi dati, correggerli o cancellarli. Nei casi previsti dal GDPR può anche chiederne la limitazione o la portabilità, oppure opporsi al trattamento (artt. 15-22 GDPR). Le rispondiamo entro un mese. Può presentare un reclamo al <a href="https://www.garanteprivacy.it/">Garante per la protezione dei dati personali</a>.</p>
       </div>
     </div>
   </section>
@@ -47,8 +93,9 @@ import { medaidBookingEnabled } from '../data/medaid-booking.js';
     <div class="container">
       <div class="sec-head"><h2>Cookie</h2></div>
       <div class="sec-body prose">
-        <p>Le pagine di questo sito non caricano strumenti di analisi o di profilazione.</p>
-        {medaidBookingEnabled && <p>Il calendario di Medaid viene caricato solo quando lo apre. Per informazioni sui cookie di Medaid consulti la sua <a href="https://medaid.it/cookie-policy/">informativa sui cookie</a>.</p>}
+        <p>Questo sito non usa cookie e non salva informazioni sul suo dispositivo. Non carica strumenti di analisi, di profilazione o mappe incorporate: i collegamenti a Google Maps si aprono solo se li segue. Per questo non le chiediamo alcun consenso.</p>
+        {medaidBookingEnabled && <p>Il calendario di Medaid si carica solo quando lo apre. Per i cookie e gli strumenti usati da Medaid consulti la sua <a href="https://medaid.it/cookie-policy/">informativa sui cookie</a>.</p>}
+        <p>Ultimo aggiornamento: {updated}.</p>
       </div>
     </div>
   </section>

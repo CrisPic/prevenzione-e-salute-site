@@ -15,8 +15,11 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      // Leave out the EN placeholder until the English pages exist
-      filter: (page) => info.showEnglish || !page.includes('/en/'),
+      // Leave out the EN placeholder until the English pages exist, and the legal pages,
+      // which are noindex (they name the doctor and add nothing to search).
+      filter: (page) =>
+        (info.showEnglish || !page.includes('/en/')) &&
+        !page.includes('/privacy/') && !page.includes('/note-legali/'),
     }),
   ],
 });
